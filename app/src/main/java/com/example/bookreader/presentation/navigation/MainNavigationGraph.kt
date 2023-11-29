@@ -8,7 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.bookreader.presentation.BookInfoScreen.BookInfoScreen
 import com.example.bookreader.presentation.ProfileScreen.ProfileScreen
+import com.example.bookreader.presentation.SearchBookScreen.SearchBookScreen
 import com.example.bookreader.presentation.SplashScreen.SplashScreen
 import com.example.bookreader.presentation.utils.Routes
 
@@ -20,11 +22,11 @@ fun MainNavigationGraph() {
 
     NavHost(
         navController = navController,
-        startDestination = Routes.LOADING,
+        startDestination = Routes.CURRENT_BOOK,
 
         ) {
         composable(
-            route = Routes.PROFILE,
+            route = Routes.CURRENT_BOOK,
             enterTransition = {
                 fadeIn(animationSpec = tween(time)) + slideIntoContainer(
                     AnimatedContentTransitionScope.SlideDirection.Up,
@@ -38,8 +40,9 @@ fun MainNavigationGraph() {
                 )
             },
         ) {
-            ProfileScreen(navController)
+            BookInfoScreen(navController)
         }
+
         composable(Routes.LOADING) {
             SplashScreen(navController)
         }

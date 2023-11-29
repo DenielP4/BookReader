@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     color = BlueLight
                 ) {
-                    SearchBookScreen()
+                    MainNavigationGraph()
                 }
             }
         }
