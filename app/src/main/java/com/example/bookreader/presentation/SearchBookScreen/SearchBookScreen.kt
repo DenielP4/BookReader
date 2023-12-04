@@ -56,6 +56,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.bookreader.R
 import com.example.bookreader.presentation.AuthScreen.resourses.DownAuth
 import com.example.bookreader.presentation.AuthScreen.resourses.UpAuth
@@ -68,7 +70,11 @@ import com.example.bookreader.presentation.ui.theme.Orange
 import com.example.bookreader.presentation.ui.theme.TextLight
 
 @Composable
-fun SearchBookScreen() {
+fun SearchBookScreen(
+    onNavigate: (String) -> Unit
+) {
+
+    val navController = rememberNavController()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -80,7 +86,9 @@ fun SearchBookScreen() {
                     .fillMaxWidth()
                     .fillMaxHeight(0.16f)
                     .background(BlueLight)
-            )
+            ){
+                onNavigate(it)
+            }
             BookCardSelection(
                 modifier = Modifier
                     .fillMaxWidth()

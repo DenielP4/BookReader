@@ -1,6 +1,7 @@
 package com.example.bookreader.presentation.SearchBookScreen.resourses
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,8 +30,11 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
+import androidx.navigation.NavController
 import com.example.bookreader.R
+import com.example.bookreader.common.Resource
 import com.example.bookreader.presentation.ui.theme.Orange
+import com.example.bookreader.presentation.utils.Routes
 
 @Composable
 fun BookCardSelection(
@@ -49,7 +53,7 @@ fun BookCardSelection(
     }
 }
 
-@Preview()
+
 @Composable
 fun BookCardItem(
     modifier: Modifier = Modifier
@@ -89,7 +93,7 @@ fun BookCardItem(
     }
     ConstraintLayout(
         constraintSet = constrains,
-        modifier = modifier.padding(vertical = 10.dp)
+        modifier = modifier.padding(vertical = 10.dp).clickable { TODO() }
     ) {
 
         Card(

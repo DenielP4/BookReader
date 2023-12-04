@@ -33,13 +33,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.bookreader.R
 import com.example.bookreader.presentation.ui.theme.BlueDark
 import com.example.bookreader.presentation.ui.theme.Border
+import com.example.bookreader.presentation.utils.Routes
 
 @Composable
 fun SearchCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigate: (String) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -47,7 +50,9 @@ fun SearchCard(
         SearchItem(
             modifier = Modifier
                 .fillMaxWidth()
-        )
+        ){
+            onNavigate(it)
+        }
         FilterItem(
             modifier = Modifier
                 .fillMaxWidth()
@@ -58,7 +63,8 @@ fun SearchCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchItem(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigate: (String) -> Unit
 ) {
     val searchText = remember {
         mutableStateOf("")
@@ -105,7 +111,7 @@ fun SearchItem(
             shape = RoundedCornerShape(5.dp)
         ) {}
         IconButton(
-            onClick = { /*TODO*/ },
+            onClick = { onNavigate(Routes.FILTER) },
             colors = IconButtonDefaults.iconButtonColors(BlueDark),
             modifier = Modifier
                 .padding(end = 5.dp)
