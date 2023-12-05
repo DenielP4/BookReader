@@ -14,3 +14,35 @@ object Routes {
     const val AUTHORIZATION = "auth_screen"
     const val REGISTRATION = "reg_screen"
 }
+
+object Root {
+    const val LOADING = "root_splash"
+    const val MAIN_SCREEN = "root_main"
+}
+
+object Application {
+    const val PROFILE = "app_profile"
+    const val USER_BOOK = "app_user_book"
+    const val SEARCH = "app_search"
+    const val FILTER = "app_filter"
+    const val BOOK_INFO = "app_book_info"
+}
+
+object SearchScreen {
+    const val FILTER = "search_filter"
+    const val BOOK_INFO = "search_book_info"
+}
+
+object BookInformationScreen {
+    const val BOOK_INFO = "book_info"
+    const val REVIEW = "book_review"
+}
+
+object ReviewScreen {
+    const val REVIEW = "review_screen"
+}
+
+object ProfileScreen {
+    const val AUTHORIZATION = "profile_auth"
+    const val REGISTRATION = "profile_reg"
+}

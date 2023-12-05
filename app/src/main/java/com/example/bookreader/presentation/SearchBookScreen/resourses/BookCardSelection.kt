@@ -34,11 +34,13 @@ import androidx.navigation.NavController
 import com.example.bookreader.R
 import com.example.bookreader.common.Resource
 import com.example.bookreader.presentation.ui.theme.Orange
+import com.example.bookreader.presentation.utils.Application
 import com.example.bookreader.presentation.utils.Routes
 
 @Composable
 fun BookCardSelection(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigate: (String) -> Unit
 ) {
     LazyColumn(
         modifier = modifier
@@ -48,7 +50,9 @@ fun BookCardSelection(
                 modifier = Modifier
                     .fillMaxHeight(0.2f)
                     .fillMaxWidth()
-            )
+            ){
+                onNavigate(it)
+            }
         }
     }
 }
@@ -56,7 +60,8 @@ fun BookCardSelection(
 
 @Composable
 fun BookCardItem(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigate: (String) -> Unit
 ) {
     var rating = 4 // рейтинг книги
     var look = 20 // количество просмотров
@@ -93,7 +98,7 @@ fun BookCardItem(
     }
     ConstraintLayout(
         constraintSet = constrains,
-        modifier = modifier.padding(vertical = 10.dp).clickable { TODO() }
+        modifier = modifier.padding(vertical = 10.dp).clickable { onNavigate(Application.BOOK_INFO) }
     ) {
 
         Card(

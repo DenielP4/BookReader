@@ -37,6 +37,7 @@ import androidx.navigation.NavController
 import com.example.bookreader.R
 import com.example.bookreader.presentation.ui.theme.BlueDark
 import com.example.bookreader.presentation.ui.theme.Border
+import com.example.bookreader.presentation.utils.Application
 import com.example.bookreader.presentation.utils.Routes
 
 @Composable
@@ -111,7 +112,7 @@ fun SearchItem(
             shape = RoundedCornerShape(5.dp)
         ) {}
         IconButton(
-            onClick = { onNavigate(Routes.FILTER) },
+            onClick = { onNavigate(Application.FILTER) },
             colors = IconButtonDefaults.iconButtonColors(BlueDark),
             modifier = Modifier
                 .padding(end = 5.dp)

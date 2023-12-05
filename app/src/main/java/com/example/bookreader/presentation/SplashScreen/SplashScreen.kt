@@ -17,6 +17,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.bookreader.presentation.ui.theme.BlueLight
+import com.example.bookreader.presentation.utils.Root
 import com.example.bookreader.presentation.utils.Routes
 import kotlinx.coroutines.delay
 
@@ -27,7 +28,7 @@ fun SplashScreen(
     val composition by rememberLottieComposition(spec = LottieCompositionSpec.Asset("anim.json"))
     LaunchedEffect(key1 = true) {
         delay(3000)
-        navController.navigate(Routes.MAIN_SCREEN)
+        navController.navigate(Root.MAIN_SCREEN)
     }
     Box(
         modifier = Modifier

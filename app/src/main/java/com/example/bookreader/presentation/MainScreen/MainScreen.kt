@@ -13,20 +13,15 @@ import com.example.bookreader.presentation.navigation.BottomNav
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MainScreen(
-    mainNavController: NavHostController
+    navController: NavHostController = rememberNavController()
 ) {
     val scaffoldState = rememberScaffoldState()
-    val navController = rememberNavController()
     Scaffold(
         scaffoldState = scaffoldState,
         bottomBar = {
-            BottomNav(){
-                navController.navigate(it)
-            }
+            BottomNav(navController = navController)
         }
     ) {
-        AppNavigationGraph(navController = navController){
-            mainNavController.navigate(it)
-        }
+        AppNavigationGraph(navController = navController)
     }
 }

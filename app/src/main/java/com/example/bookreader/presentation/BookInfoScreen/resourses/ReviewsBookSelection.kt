@@ -34,11 +34,12 @@ import com.example.bookreader.presentation.ui.theme.BlueDark
 import com.example.bookreader.presentation.ui.theme.GrayLight
 import com.example.bookreader.presentation.ui.theme.Orange
 import com.example.bookreader.presentation.ui.theme.GrayDark
+import com.example.bookreader.presentation.utils.BookInformationScreen
 
-@Preview
 @Composable
 fun ReviewsBookSelection(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigate: (String) -> Unit
 ) {
     val constrains = ConstraintSet {
         val reviewList = createRefFor("reviewList")
@@ -75,7 +76,7 @@ fun ReviewsBookSelection(
         }
         Button(
             modifier = Modifier.layoutId("addReviewButton"),
-            onClick = { /*TODO*/ },
+            onClick = { onNavigate(BookInformationScreen.REVIEW) },
             colors = ButtonDefaults.buttonColors(BlueDark),
             shape = RoundedCornerShape(18.dp),
             contentPadding = PaddingValues(

@@ -18,13 +18,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.bookreader.presentation.ui.theme.BlueDark
 import com.example.bookreader.presentation.ui.theme.BlueLight
 
 @Composable
 fun BottomNav(
-    onNavigate: (String) -> Unit
-    ) {
+    navController: NavController
+) {
     val listItem = listOf(
         BottomNavItem.Search,
         BottomNavItem.UserBook,
@@ -33,34 +35,43 @@ fun BottomNav(
     var selectedIndex by rememberSaveable {
         mutableIntStateOf(0)
     }
-    NavigationBar(
-        containerColor = BlueLight
-    ) {
-        listItem.forEachIndexed { index, bottomNavItem ->
-            NavigationBarItem(
-                selected = selectedIndex == index,
-                onClick = {
-                    selectedIndex = index
-                    onNavigate(bottomNavItem.route)
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = BlueLight
-                ),
-                label = {
-                    Text(
-                        text = bottomNavItem.title,
-                        color = if (index == selectedIndex) Color.White else BlueDark
-                    )
-                },
-                icon = {
-                    Icon(
-                        painter = painterResource(id = bottomNavItem.iconId),
-                        contentDescription = bottomNavItem.title,
-                        tint = if (index == selectedIndex) Color.White else BlueDark
-                    )
-                },
-                alwaysShowLabel = true
-            )
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
+    val bottomBarDestination = listItem.any { it.route == currentDestination?.route }
+    if (bottomBarDestination) {
+        NavigationBar(
+            containerColor = BlueLight
+        ) {
+            listItem.forEachIndexed { index, bottomNavItem ->
+                NavigationBarItem(
+                    selected = selectedIndex == index,
+                    onClick = {
+                        selectedIndex = index
+                        navController.navigate(bottomNavItem.route) {
+                            popUpTo(navController.graph.findStartDestination().id)
+                            launchSingleTop = true
+                        }
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        indicatorColor = BlueLight
+                    ),
+                    label = {
+                        Text(
+                            text = bottomNavItem.title,
+                            color = if (index == selectedIndex) Color.White else BlueDark
+                        )
+                    },
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = bottomNavItem.iconId),
+                            contentDescription = bottomNavItem.title,
+                            tint = if (index == selectedIndex) Color.White else BlueDark
+                        )
+                    },
+                    alwaysShowLabel = true
+                )
+            }
         }
     }
 }

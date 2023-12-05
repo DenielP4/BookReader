@@ -29,7 +29,8 @@ data class TabItem(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BookTableInfo(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigate: (String) -> Unit
 ) {
     val tabItems = listOf(
         TabItem(
@@ -95,7 +96,9 @@ fun BookTableInfo(
                     1 -> {
                         ReviewsBookSelection(
                             modifier = Modifier.fillMaxSize()
-                        )
+                        ) {
+                            onNavigate(it)
+                        }
                     }
                 }
             }

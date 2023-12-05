@@ -98,7 +98,9 @@ fun SearchBookScreen(
                         end = 10.dp,
                         bottom = 50.dp
                     )
-            )
+            ){
+                onNavigate(it)
+            }
         }
     }
 }
