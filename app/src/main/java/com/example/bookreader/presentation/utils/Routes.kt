@@ -26,6 +26,8 @@ object Application {
     const val SEARCH = "app_search"
     const val FILTER = "app_filter"
     const val BOOK_INFO = "app_book_info"
+    const val AUTHORIZATION = "app_auth"
+    const val PICK_BOOK = "app_pick_book"
 }
 
 object SearchScreen {
@@ -45,4 +47,8 @@ object ReviewScreen {
 object ProfileScreen {
     const val AUTHORIZATION = "profile_auth"
     const val REGISTRATION = "profile_reg"
+}
+
+object UserBookScreen {
+    const val PICK_BOOK = "user_pick"
 }

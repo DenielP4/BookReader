@@ -96,7 +96,7 @@ fun SearchBookScreen(
                     .padding(
                         start = 10.dp,
                         end = 10.dp,
-                        bottom = 50.dp
+                        bottom = 5.dp
                     )
             ){
                 onNavigate(it)

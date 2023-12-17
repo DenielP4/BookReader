@@ -1,5 +1,6 @@
 package com.example.bookreader.presentation.AddReviewScreen.resourses
 
+import android.renderscript.ScriptGroup.Input
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,7 +27,10 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
+import com.example.bookreader.presentation.ui.theme.BlackLight
 import com.example.bookreader.presentation.ui.theme.GrayDark
+import com.example.bookreader.presentation.ui.theme.InputDark
+import com.example.bookreader.presentation.ui.theme.TextGray
 
 @Composable
 fun CenterSectionReview(
@@ -67,16 +71,19 @@ fun CenterSectionReview(
         modifier = modifier
     ) {
         Card(
-            colors = CardDefaults.cardColors(GrayDark),
+            colors = CardDefaults.cardColors(BlackLight),
             shape = RoundedCornerShape(20.dp),
             modifier = Modifier
                 .layoutId("selection")
-                .padding(horizontal = 10.dp)
                 .fillMaxWidth()
         ) {
             ConstraintLayout(
                 constraintSet = constrainsInSelection,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(
+                    top = 10.dp,
+                    start = 10.dp,
+                    end = 10.dp
+                )
             ) {
                 Text(
                     text = "Комментарий",
@@ -92,18 +99,23 @@ fun CenterSectionReview(
                     value = review,
                     onValueChange = { review = it },
                     textStyle = LocalTextStyle.current.copy(
-                        textAlign = TextAlign.Left
+                        textAlign = TextAlign.Left,
+                        color = Color.White
                     ),
-                    singleLine = true,
+                    singleLine = false,
+                    maxLines = 5,
                     shape = RoundedCornerShape(15.dp),
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = InputDark,
+                        unfocusedContainerColor = InputDark
                     ),
                     placeholder = {
                         Text(
                             text = "Оставьте Ваши впечатления",
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = TextGray
                         )
                     },
                     keyboardOptions = KeyboardOptions(

@@ -19,11 +19,12 @@ import androidx.constraintlayout.compose.layoutId
 import androidx.navigation.NavController
 import com.example.bookreader.R
 import com.example.bookreader.presentation.ui.theme.BlueLight
+import com.example.bookreader.presentation.utils.ProfileScreen
 
 @Composable
 fun CardProfile(
-    navController: NavController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigate: (String) -> Unit
 ) {
     val constrains = ConstraintSet {
         val image = createRefFor("image")
@@ -57,7 +58,7 @@ fun CardProfile(
         )
         IconButton(
             modifier = Modifier.layoutId("logOut"),
-            onClick = { TODO() }
+            onClick = { onNavigate(ProfileScreen.AUTHORIZATION) }
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_logout),

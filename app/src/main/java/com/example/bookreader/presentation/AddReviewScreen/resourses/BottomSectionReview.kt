@@ -25,10 +25,13 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
+import com.example.bookreader.presentation.ui.theme.BlackLight
 import com.example.bookreader.presentation.ui.theme.BlueDark
 import com.example.bookreader.presentation.ui.theme.Gray
 import com.example.bookreader.presentation.ui.theme.GrayDark
 import com.example.bookreader.presentation.ui.theme.GrayLight
+import com.example.bookreader.presentation.ui.theme.OffTurn
+import com.example.bookreader.presentation.ui.theme.TextGray
 
 @Composable
 fun BottomSectionReview(
@@ -55,15 +58,20 @@ fun BottomSectionReview(
     var textOnButton by remember {
         mutableStateOf("ПОСТАВИТЬ ОЦЕНКУ ОТ 1 ДО 5")
     }
+    var colorTextOnButton by remember {
+        mutableStateOf(OffTurn)
+    }
     var colorButton by remember {
         mutableStateOf(Gray)
     }
     LaunchedEffect(key1 = ratingCurrent) {
         if (ratingCurrent == 0f) {
             textOnButton = "ПОСТАВИТЬ ОЦЕНКУ ОТ 1 ДО 5"
+            colorTextOnButton = OffTurn
             colorButton = Gray
         } else {
             textOnButton = "ОСТАВИТЬ ОТЗЫВ"
+            colorTextOnButton = Color.White
             colorButton = BlueDark
         }
 
@@ -83,7 +91,7 @@ fun BottomSectionReview(
                 bottomEnd = 0.dp,
                 bottomStart = 0.dp,
             ),
-            colors = CardDefaults.cardColors(GrayDark),
+            colors = CardDefaults.cardColors(BlackLight),
             content = {}
         )
         Button(
@@ -101,13 +109,13 @@ fun BottomSectionReview(
             Text(
                 text = textOnButton,
                 fontSize = 20.sp,
-                color = Color.White,
+                color = colorTextOnButton,
                 fontWeight = FontWeight.SemiBold
             )
         }
         Text(
             text = textHepl,
-            color = GrayLight,
+            color = TextGray,
             fontSize = 18.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier

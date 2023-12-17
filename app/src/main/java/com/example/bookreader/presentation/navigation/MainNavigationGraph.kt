@@ -36,13 +36,13 @@ fun MainNavigationGraph() {
         composable(
             route = Root.MAIN_SCREEN,
             enterTransition = {
-                fadeIn(animationSpec = tween(time)) + slideIntoContainer(
+                slideIntoContainer(
                     AnimatedContentTransitionScope.SlideDirection.Up,
                     tween(time)
                 )
             },
             popExitTransition = {
-                fadeOut(animationSpec = tween(time)) + slideOutOfContainer(
+                slideOutOfContainer(
                     AnimatedContentTransitionScope.SlideDirection.Down,
                     tween(time)
                 )

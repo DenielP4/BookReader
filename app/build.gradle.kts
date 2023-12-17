@@ -77,6 +77,8 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.5.0")
     //Рейтинг
     implementation("com.github.a914-gowtham:compose-ratingbar:1.3.4")
+    //PDFReader
+    implementation ("io.github.grizzi91:bouquet:1.1.2")
 
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

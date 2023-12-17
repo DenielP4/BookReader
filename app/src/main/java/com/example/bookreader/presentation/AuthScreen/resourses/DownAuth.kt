@@ -39,6 +39,7 @@ import androidx.navigation.NavController
 import com.example.bookreader.R
 import com.example.bookreader.presentation.ui.theme.BlueDark
 import com.example.bookreader.presentation.ui.theme.TextLight
+import com.example.bookreader.presentation.utils.ProfileScreen
 import com.example.bookreader.presentation.utils.Routes
 
 @Composable
@@ -100,7 +101,9 @@ fun DownAuth(
             shape = RoundedCornerShape(10.dp),
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+                unfocusedIndicatorColor = Color.Transparent,
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White
             ),
             placeholder = {
                 Text(text = "Логин")
@@ -138,7 +141,9 @@ fun DownAuth(
             shape = RoundedCornerShape(10.dp),
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+                unfocusedIndicatorColor = Color.Transparent,
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White
             ),
             placeholder = {
                 Text(text = "Пароль")
@@ -177,7 +182,7 @@ fun DownAuth(
         TextButton(
             modifier = Modifier.layoutId("registration"),
             onClick = {
-                navController.navigate(Routes.REGISTRATION)
+                navController.navigate(ProfileScreen.REGISTRATION)
             }
         ) {
             Text(

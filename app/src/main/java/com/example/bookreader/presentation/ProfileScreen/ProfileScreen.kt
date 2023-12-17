@@ -37,7 +37,7 @@ import com.example.bookreader.presentation.ui.theme.BlueLight
 
 @Composable
 fun ProfileScreen(
-    navController: NavController
+    onNavigate: (String) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -46,12 +46,13 @@ fun ProfileScreen(
     ) {
         Column {
             CardProfile(
-                navController,
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(0.45f)
 
-            )
+            ) {
+                onNavigate(it)
+            }
             BottomStatisticUser(
                 modifier = Modifier
                     .fillMaxWidth()

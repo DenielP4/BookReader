@@ -112,7 +112,8 @@ fun MainFilterSection(
             shape = RoundedCornerShape(10.dp),
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedContainerColor = Color.White
             ),
             placeholder = {
                 Text(text = "Название книги")
@@ -149,7 +150,8 @@ fun MainFilterSection(
             shape = RoundedCornerShape(10.dp),
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedContainerColor = Color.White
             ),
             placeholder = {
                 Text(text = "Автор")

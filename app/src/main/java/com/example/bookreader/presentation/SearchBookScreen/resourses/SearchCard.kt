@@ -2,12 +2,14 @@ package com.example.bookreader.presentation.SearchBookScreen.resourses
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -74,14 +77,14 @@ fun SearchItem(
 //        mutableStateOf(false)
 //    }
     Row(
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = 5.dp, vertical = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         SearchBar(
             modifier = Modifier
-                .padding(10.dp)
-                .fillMaxWidth(0.9f),
+                .padding(end = 5.dp)
+                .weight(0.85f),
             query = searchText.value,
             onQueryChange = { text ->
                 searchText.value = text
@@ -113,15 +116,19 @@ fun SearchItem(
         ) {}
         IconButton(
             onClick = { onNavigate(Application.FILTER) },
-            colors = IconButtonDefaults.iconButtonColors(BlueDark),
             modifier = Modifier
-                .padding(end = 5.dp)
+                .padding(top = 3.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(BlueDark)
+                .wrapContentSize()
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_filter),
                 contentDescription = "Фильтер",
                 tint = Color.White,
-                modifier = Modifier.size(40.dp).padding(5.dp)
+                modifier = Modifier
+                    .size(45.dp)
+                    .padding(5.dp)
             )
         }
     }
@@ -137,7 +144,7 @@ data class Filter(
 fun FilterItem(
     modifier: Modifier = Modifier
 ) {
-    val filterList = remember {
+    var filterList = remember {
         mutableStateListOf(
             Filter(
                 "ХОРРОР",
@@ -170,11 +177,18 @@ fun FilterItem(
         verticalAlignment = Alignment.Top
     ) {
         items(filterList) { filter ->
-            Log.d("Filter", "$filter")
             BoxFilter(
                 filter = filter,
                 filterList = filterList
-            )
+            ) {
+                filterList.replaceAll {
+                    it.copy(
+                        onTurn = it.text == filter.text
+                    )
+                }
+                filterList.sortByDescending { it.onTurn }
+                Log.d("Filter List", "$filterList")
+            }
         }
     }
 }
@@ -183,16 +197,11 @@ fun FilterItem(
 @Composable
 fun BoxFilter(
     filter: Filter,
-    filterList: SnapshotStateList<Filter>
+    filterList: SnapshotStateList<Filter>,
+    onClick: () -> Unit
 ) {
     Button(
-        onClick = {
-            filterList.replaceAll {
-                it.copy(
-                    onTurn = it.text == filter.text
-                )
-            }
-        },
+        onClick = onClick,
         colors = ButtonDefaults.buttonColors(BlueDark),
         border = BorderStroke(
             width = 2.dp,
