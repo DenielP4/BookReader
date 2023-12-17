@@ -73,7 +73,9 @@ import com.example.bookreader.presentation.ui.theme.Orange
 
 
 @Composable
-fun UserBookScreen() {
+fun UserBookScreen(
+    onNavigate: (String) -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -89,7 +91,9 @@ fun UserBookScreen() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
-            )
+            ) {
+                onNavigate(it)
+            }
         }
     }
 }

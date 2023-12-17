@@ -22,6 +22,7 @@ import com.example.bookreader.presentation.AddReviewScreen.AddReviewScreen
 import com.example.bookreader.presentation.AuthScreen.AuthScreen
 import com.example.bookreader.presentation.BookInfoScreen.BookInfoScreen
 import com.example.bookreader.presentation.FilterScreen.FilterScreen
+import com.example.bookreader.presentation.PickBookScreen.PickBookScreen
 import com.example.bookreader.presentation.ProfileScreen.ProfileScreen
 import com.example.bookreader.presentation.RegScreen.RegScreen
 import com.example.bookreader.presentation.SearchBookScreen.SearchBookScreen
@@ -46,7 +47,9 @@ fun AppNavigationGraph(
         composable(
             route = Application.USER_BOOK,
         ) {
-            UserBookScreen()
+            UserBookScreen() { route ->
+                navController.navigate(route)
+            }
         }
         composable(
             route = Application.PROFILE,
@@ -140,9 +143,23 @@ fun AppNavigationGraph(
                 navController.navigate(route)
             }
         }
+        pickBookNavGraph(navController)
         filtersNavGraph(navController)
         booksNavGraph(navController)
         authNavGraph(navController)
+    }
+}
+
+fun NavGraphBuilder.pickBookNavGraph(navController: NavHostController) {
+    navigation(
+        route = Application.PICK_BOOK,
+        startDestination = UserBookScreen.PICK_BOOK
+    ) {
+        composable(
+            route = UserBookScreen.PICK_BOOK
+        ) {
+            PickBookScreen(navController)
+        }
     }
 }
 

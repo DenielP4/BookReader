@@ -110,6 +110,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.bookreader.presentation.AuthScreen.AuthScreen
 import com.example.bookreader.presentation.BookInfoScreen.BookInfoScreen
 import com.example.bookreader.presentation.FilterScreen.FilterScreen
+import com.example.bookreader.presentation.FilterScreen.resourses.MainFilterSection
+import com.example.bookreader.presentation.FilterScreen.resourses.TopFilterSection
 import com.example.bookreader.presentation.ProfileScreen.ProfileScreen
 import com.example.bookreader.presentation.RegScreen.RegScreen
 import com.example.bookreader.presentation.SearchBookScreen.SearchBookScreen
@@ -147,3 +149,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+

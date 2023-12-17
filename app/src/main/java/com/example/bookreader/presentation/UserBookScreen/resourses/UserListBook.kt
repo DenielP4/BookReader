@@ -49,7 +49,8 @@ data class Menu(
 
 @Composable
 fun UserListBook(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigate: (String) -> Unit
 ) {
     val constrains = ConstraintSet {
         val sorting = createRefFor("sorting")
@@ -163,7 +164,9 @@ fun UserListBook(
                     modifier = Modifier
                         .fillMaxHeight(0.2f)
                         .fillMaxWidth()
-                )
+                ) {
+                    onNavigate(it)
+                }
             }
         }
     }
@@ -172,6 +175,7 @@ fun UserListBook(
 @Composable
 fun AddedBookCardItem(
     modifier: Modifier = Modifier,
+    onNavigate: (String) -> Unit
 ) {
 
     val constrains = ConstraintSet {
@@ -202,7 +206,7 @@ fun AddedBookCardItem(
     }
     ConstraintLayout(
         constraintSet = constrains,
-        modifier = modifier.padding(vertical = 10.dp)
+        modifier = modifier.padding(vertical = 10.dp).clickable { onNavigate(Application.PICK_BOOK) }
     ) {
 
         Card(
