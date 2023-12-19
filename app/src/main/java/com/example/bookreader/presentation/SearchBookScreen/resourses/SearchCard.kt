@@ -3,6 +3,8 @@ package com.example.bookreader.presentation.SearchBookScreen.resourses
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,31 +15,51 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.layoutId
 import androidx.navigation.NavController
 import com.example.bookreader.R
+import com.example.bookreader.presentation.SearchBookScreen.Filter
+import com.example.bookreader.presentation.SearchBookScreen.SearchBookEvent
+import com.example.bookreader.presentation.SearchBookScreen.SearchBookViewModel
 import com.example.bookreader.presentation.ui.theme.BlueDark
 import com.example.bookreader.presentation.ui.theme.Border
 import com.example.bookreader.presentation.utils.Application
@@ -45,6 +67,7 @@ import com.example.bookreader.presentation.utils.Routes
 
 @Composable
 fun SearchCard(
+    viewModel: SearchBookViewModel,
     modifier: Modifier = Modifier,
     onNavigate: (String) -> Unit
 ) {
@@ -52,53 +75,57 @@ fun SearchCard(
         modifier = modifier
     ) {
         SearchItem(
+            viewModel = viewModel,
             modifier = Modifier
                 .fillMaxWidth()
-        ){
+        ) {
             onNavigate(it)
         }
         FilterItem(
+            viewModel = viewModel,
             modifier = Modifier
                 .fillMaxWidth()
         )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SearchItem(
+    viewModel: SearchBookViewModel,
     modifier: Modifier = Modifier,
     onNavigate: (String) -> Unit
 ) {
-    val searchText = remember {
-        mutableStateOf("")
+    val keyboard = LocalSoftwareKeyboardController.current
+    val focusRequester = remember {
+        FocusRequester()
     }
-//    val isActiv = remember {
-//        mutableStateOf(false)
-//    }
+    val focusManager = LocalFocusManager.current
     Row(
         modifier = modifier.padding(horizontal = 5.dp, vertical = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        SearchBar(
+        TextField(
             modifier = Modifier
                 .padding(end = 5.dp)
-                .weight(0.85f),
-            query = searchText.value,
-            onQueryChange = { text ->
-                searchText.value = text
+                .weight(0.85f)
+                .focusRequester(focusRequester),
+            value = viewModel.searchText.value,
+            onValueChange = { text ->
+                viewModel.onEvent(SearchBookEvent.OnTextSearchChange(text))
             },
-            onSearch = { text ->
-//                isActiv.value = false
-            },
-            colors = SearchBarDefaults.colors(
-                containerColor = Color.White
+            textStyle = LocalTextStyle.current.copy(
+                textAlign = TextAlign.Left
             ),
-            active = false,
-            onActiveChange = {
-//                isActiv.value = it
-            },
+            singleLine = true,
+            shape = RoundedCornerShape(5.dp),
+            colors = TextFieldDefaults.colors(
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White
+            ),
             placeholder = {
                 Text(
                     text = "Название книги или автор",
@@ -112,8 +139,24 @@ fun SearchItem(
                     tint = Color.Gray
                 )
             },
-            shape = RoundedCornerShape(5.dp)
-        ) {}
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Outlined.Close,
+                    contentDescription = "Delete",
+                    modifier = Modifier.clickable {
+                        viewModel.onEvent(SearchBookEvent.OnClickDeleteSearchText)
+                        keyboard?.hide()
+                        focusManager.clearFocus()
+                    }
+                )
+            },
+            isError = false,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            )
+
+        )
         IconButton(
             onClick = { onNavigate(Application.FILTER) },
             modifier = Modifier
@@ -135,59 +178,22 @@ fun SearchItem(
 
 }
 
-data class Filter(
-    val text: String,
-    val onTurn: Boolean
-)
 
 @Composable
 fun FilterItem(
+    viewModel: SearchBookViewModel,
     modifier: Modifier = Modifier
 ) {
-    var filterList = remember {
-        mutableStateListOf(
-            Filter(
-                "ХОРРОР",
-                false
-            ),
-            Filter(
-                "КОМЕДИЯ",
-                false
-            ),
-            Filter(
-                "ДЕТЕКТИВ",
-                false
-            ),
-            Filter(
-                "ФЭНТЕЗИ",
-                false
-            ),
-            Filter(
-                "ФАНФИК",
-                false
-            ),
-            Filter(
-                "СКАЗКИ",
-                false
-            ),
-        )
-    }
+
     LazyRow(
         modifier = modifier,
         verticalAlignment = Alignment.Top
     ) {
-        items(filterList) { filter ->
+        items(viewModel.filterList) { filter ->
             BoxFilter(
                 filter = filter,
-                filterList = filterList
             ) {
-                filterList.replaceAll {
-                    it.copy(
-                        onTurn = it.text == filter.text
-                    )
-                }
-                filterList.sortByDescending { it.onTurn }
-                Log.d("Filter List", "$filterList")
+                viewModel.onEvent(SearchBookEvent.OnFilterGenre(filter.text))
             }
         }
     }
@@ -197,7 +203,6 @@ fun FilterItem(
 @Composable
 fun BoxFilter(
     filter: Filter,
-    filterList: SnapshotStateList<Filter>,
     onClick: () -> Unit
 ) {
     Button(

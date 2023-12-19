@@ -17,11 +17,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Star
@@ -32,10 +35,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,19 +53,27 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
 import androidx.navigation.NavController
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
+import coil.request.ImageRequest
 import com.example.bookreader.R
 import com.example.bookreader.common.Resource
+import com.example.bookreader.domain.models.BookList
+import com.example.bookreader.presentation.SearchBookScreen.SearchBookEvent
+import com.example.bookreader.presentation.SearchBookScreen.SearchBookViewModel
 import com.example.bookreader.presentation.ui.theme.BlackLight
 import com.example.bookreader.presentation.ui.theme.BlueDark
 import com.example.bookreader.presentation.ui.theme.GrayLight
 import com.example.bookreader.presentation.ui.theme.Orange
 import com.example.bookreader.presentation.utils.Application
+import com.example.bookreader.presentation.utils.BookInformationScreen
 import com.example.bookreader.presentation.utils.Routes
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BookCardSelection(
+    viewModel: SearchBookViewModel,
     modifier: Modifier = Modifier,
     onNavigate: (String) -> Unit
 ) {
@@ -70,14 +84,15 @@ fun BookCardSelection(
         item{
             Spacer(modifier = Modifier.height(10.dp))
         }
-        items(5) {
+        items(viewModel.bookList.value) { book ->
             BookCardItem(
+                book = book,
                 modifier = Modifier
                     .fillMaxHeight(0.2f)
                     .fillMaxWidth()
                     .padding(bottom = 5.dp)
-            ) {
-                onNavigate(it)
+            ) { event ->
+                viewModel.onEvent(event)
             }
         }
     }
@@ -88,11 +103,11 @@ fun BookCardSelection(
 @ExperimentalMaterialApi
 @Composable
 fun BookCardItem(
+    book: BookList,
     modifier: Modifier = Modifier,
-    onNavigate: (String) -> Unit
+    onEvent: (SearchBookEvent) -> Unit
 ) {
 
-    var rating = 4 // рейтинг книги
     var look = 20 // количество просмотров
     val squareSize = 100.dp
     val swipeAbleState = rememberSwipeableState(initialValue = 0)
@@ -135,7 +150,11 @@ fun BookCardItem(
             .clip(RoundedCornerShape(15.dp))
             .background(BlackLight)
             .clickable {
-                onNavigate(Application.BOOK_INFO)
+                onEvent(
+                    SearchBookEvent.OnBookClick(
+                        Application.BOOK_INFO + "/${book.id}"
+                    )
+                )
             }
             .swipeable(
                 state = swipeAbleState,
@@ -154,8 +173,7 @@ fun BookCardItem(
             verticalArrangement = Arrangement.Center
         ) {
             IconButton(
-                onClick = {
-                },
+                onClick = { TODO() },
                 modifier = Modifier
                     .size(50.dp)
                     .clip(CircleShape)
@@ -190,24 +208,35 @@ fun BookCardItem(
                         .clip(RoundedCornerShape(5.dp))
                         .layoutId("imageBook")
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.hp),
-                        contentDescription = "Картинка",
+                    SubcomposeAsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(book.image)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = book.name,
+                        loading = {
+                            CircularProgressIndicator(
+                                color = MaterialTheme.colors.primary, modifier = Modifier.scale(0.5F)
+                            )
+                        },
+                        success = { success ->
+                            SubcomposeAsyncImageContent()
+                        },
                         modifier = Modifier
-                            .clip(RoundedCornerShape(5.dp)),
-                        contentScale = ContentScale.FillWidth
+                            .clip(RoundedCornerShape(5.dp)).size(width = 150.dp, height = 221.dp),
+                        contentScale = ContentScale.Crop
                     )
                 }
 
                 Text(
-                    text = "Название книги",
+                    text = book.name,
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.layoutId("nameBook")
                 )
                 Text(
-                    text = "Автор книги",
+                    text = book.author,
                     color = Color.White,
                     fontSize = 16.sp,
                     modifier = Modifier.layoutId("nameAuthor")
@@ -216,14 +245,14 @@ fun BookCardItem(
                     modifier = Modifier.layoutId("ratingBook")
                 ) {
                     Row() {
-                        repeat(rating) {
+                        repeat(book.rate) {
                             Icon(
                                 imageVector = Icons.Default.Star,
                                 contentDescription = "Рейтинг",
                                 tint = Orange
                             )
                         }
-                        val fold = 5 - rating
+                        val fold = 5 - book.rate
                         if (fold > 0)
                             repeat(fold) {
                                 Icon(

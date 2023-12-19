@@ -1,4 +1,8 @@
 package com.example.bookreader
 
-class BookReaderApplication {
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
+
+@HiltAndroidApp
+class BookReaderApplication : Application() {
 }

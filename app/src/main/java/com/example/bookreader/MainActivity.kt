@@ -130,9 +130,11 @@ import com.rizzi.bouquet.ResourceType
 import com.rizzi.bouquet.VerticalPDFReader
 import com.rizzi.bouquet.VerticalPdfReaderState
 import com.rizzi.bouquet.rememberVerticalPdfReaderState
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import kotlin.math.roundToInt
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterialApi::class)

@@ -26,7 +26,9 @@ object Application {
     const val SEARCH = "app_search"
     const val FILTER = "app_filter"
     const val BOOK_INFO = "app_book_info"
+    const val REVIEW = "app_review"
     const val AUTHORIZATION = "app_auth"
+    const val REGISTRATION = "app_reg"
     const val PICK_BOOK = "app_pick_book"
 }
 

@@ -79,7 +79,7 @@ fun PickBookScreen(
 fun MainBook(
     modifier: Modifier = Modifier
 ) {
-    val bookUrl = "https://crb.rgup.ru/rimg/files/Nauka/sbornik_stud.pdf"
+    val bookUrl = "https://www.100bestbooks.ru/files/Bulgakov_Master_i_Margarita.pdf"
     val pdfState = rememberVerticalPdfReaderState(
         resource = ResourceType.Remote(bookUrl),
         isZoomEnable = true

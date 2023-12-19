@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -24,8 +26,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -34,17 +38,23 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
 import androidx.navigation.NavController
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
+import coil.request.ImageRequest
 import com.example.bookreader.R
+import com.example.bookreader.data.remote.responses.Book
+import com.example.bookreader.domain.models.BookInfo
+import com.example.bookreader.presentation.BookInfoScreen.BookInfoViewModel
 import com.example.bookreader.presentation.ui.theme.BlueDark
 import com.example.bookreader.presentation.ui.theme.BlueLight
 import com.example.bookreader.presentation.ui.theme.Orange
 
 @Composable
 fun BookCardTop(
+    book: BookInfo,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    var rating = 4 // рейтинг книги
     val constrains = ConstraintSet {
         val backArrow = createRefFor("back")
         val imageBook = createRefFor("imageBook")
@@ -118,15 +128,28 @@ fun BookCardTop(
             shape = RoundedCornerShape(10.dp),
             border = BorderStroke(3.dp, color = BlueDark)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.hp),
-                contentDescription = "Картинка",
-                contentScale = ContentScale.FillWidth
+            SubcomposeAsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(book.image)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = book.name,
+                loading = {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colors.primary, modifier = Modifier.scale(0.5F)
+                    )
+                },
+                success = { success ->
+                    SubcomposeAsyncImageContent()
+                },
+                modifier = Modifier
+                    .clip(RoundedCornerShape(5.dp)).size(width = 200.dp, height = 285.dp),
+                contentScale = ContentScale.Crop
             )
         }
 
         Text(
-            text = "Название книги",
+            text = book.name,
             color = Color.White,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
@@ -134,7 +157,7 @@ fun BookCardTop(
             modifier = Modifier.layoutId("nameBook")
         )
         Text(
-            text = "Автор книги",
+            text = book.author,
             color = Color.White,
             fontSize = 20.sp,
             modifier = Modifier.layoutId("nameAuthor")
@@ -150,7 +173,7 @@ fun BookCardTop(
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Row() {
-                    repeat(rating) {
+                    repeat(book.rate) {
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = "Рейтинг",
@@ -158,7 +181,7 @@ fun BookCardTop(
                             modifier = Modifier.size(35.dp)
                         )
                     }
-                    val fold = 5 - rating
+                    val fold = 5 - book.rate
                     if (fold > 0)
                         repeat(fold) {
                             Icon(

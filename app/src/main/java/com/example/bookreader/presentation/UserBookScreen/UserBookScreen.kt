@@ -59,10 +59,12 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.bookreader.R
 import com.example.bookreader.presentation.BookInfoScreen.resourses.BookCardTop
 import com.example.bookreader.presentation.BookInfoScreen.resourses.BookTableInfo
+import com.example.bookreader.presentation.SearchBookScreen.SearchBookViewModel
 import com.example.bookreader.presentation.SearchBookScreen.resourses.BookCardItem
 import com.example.bookreader.presentation.UserBookScreen.resourses.ActuallyBookCardTop
 import com.example.bookreader.presentation.UserBookScreen.resourses.UserListBook
@@ -91,6 +93,11 @@ fun UserBookScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
+                    .padding(
+                        start = 10.dp,
+                        end = 10.dp,
+                        bottom = 5.dp
+                    )
             ) {
                 onNavigate(it)
             }

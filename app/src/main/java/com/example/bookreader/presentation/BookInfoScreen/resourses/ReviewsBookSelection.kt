@@ -30,14 +30,17 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
 import com.example.bookreader.R
+import com.example.bookreader.domain.models.BookInfo
 import com.example.bookreader.presentation.ui.theme.BlueDark
 import com.example.bookreader.presentation.ui.theme.GrayLight
 import com.example.bookreader.presentation.ui.theme.Orange
 import com.example.bookreader.presentation.ui.theme.GrayDark
+import com.example.bookreader.presentation.utils.Application
 import com.example.bookreader.presentation.utils.BookInformationScreen
 
 @Composable
 fun ReviewsBookSelection(
+    book: BookInfo,
     modifier: Modifier = Modifier,
     onNavigate: (String) -> Unit
 ) {
@@ -76,7 +79,7 @@ fun ReviewsBookSelection(
         }
         Button(
             modifier = Modifier.layoutId("addReviewButton"),
-            onClick = { onNavigate(BookInformationScreen.REVIEW) },
+            onClick = { onNavigate(Application.REVIEW) },
             colors = ButtonDefaults.buttonColors(BlueDark),
             shape = RoundedCornerShape(18.dp),
             contentPadding = PaddingValues(

@@ -46,6 +46,35 @@ fun AppNavigationGraph(
     ) {
         composable(
             route = Application.USER_BOOK,
+            exitTransition = {
+                when (targetState.destination.route) {
+                    Application.PICK_BOOK -> {
+                        slideOutHorizontally(
+                            targetOffsetX = { -(it / 2) },
+                            animationSpec = tween(
+                                durationMillis = time,
+                                easing = FastOutSlowInEasing
+                            )
+                        ).apply { Log.d("USER_BOOK", "exit") }
+                    }
+
+                    else -> null
+                }
+            },
+            popEnterTransition = {
+                when (initialState.destination.route) {
+                    Application.PICK_BOOK ->
+                        slideInHorizontally(
+                            initialOffsetX = { -(it / 2) },
+                            animationSpec = tween(
+                                durationMillis = time,
+                                easing = FastOutSlowInEasing
+                            )
+                        ).apply { Log.d("USER_BOOK", "popEnter") }
+
+                    else -> null
+                }
+            },
         ) {
             UserBookScreen() { route ->
                 navController.navigate(route)
@@ -55,7 +84,7 @@ fun AppNavigationGraph(
             route = Application.PROFILE,
             exitTransition = {
                 when (targetState.destination.route) {
-                    ProfileScreen.AUTHORIZATION -> {
+                    Application.AUTHORIZATION -> {
                         slideOutVertically(
                             targetOffsetY = { it/it },
                             animationSpec = tween(
@@ -70,7 +99,7 @@ fun AppNavigationGraph(
             },
             popEnterTransition = {
                 when (initialState.destination.route) {
-                    ProfileScreen.AUTHORIZATION ->
+                    Application.AUTHORIZATION ->
                         slideInVertically(
                             initialOffsetY = { 0 },
                             animationSpec = tween(
@@ -91,7 +120,7 @@ fun AppNavigationGraph(
             route = Application.SEARCH,
             exitTransition = {
                 when (targetState.destination.route) {
-                    BookInformationScreen.BOOK_INFO -> {
+                    Application.BOOK_INFO -> {
                         slideOutHorizontally(
                             targetOffsetX = { -(it / 2) },
                             animationSpec = tween(
@@ -101,7 +130,7 @@ fun AppNavigationGraph(
                         ).apply { Log.d("SearchBook", "exit") }
                     }
 
-                    SearchScreen.FILTER -> {
+                    Application.FILTER -> {
                         slideOutVertically(
                             targetOffsetY = { -(it/it) },
                             animationSpec = tween(
@@ -116,7 +145,7 @@ fun AppNavigationGraph(
             },
             popEnterTransition = {
                 when (initialState.destination.route) {
-                    BookInformationScreen.BOOK_INFO ->
+                    Application.BOOK_INFO ->
                         slideInHorizontally(
                             initialOffsetX = { -(it / 2) },
                             animationSpec = tween(
@@ -125,7 +154,7 @@ fun AppNavigationGraph(
                             )
                         ).apply { Log.d("SearchBook", "popEnter") }
 
-                    SearchScreen.FILTER -> {
+                    Application.FILTER -> {
                         slideInVertically(
                             initialOffsetY = { 0 },
                             animationSpec = tween(
@@ -143,34 +172,41 @@ fun AppNavigationGraph(
                 navController.navigate(route)
             }
         }
-        pickBookNavGraph(navController)
-        filtersNavGraph(navController)
-        booksNavGraph(navController)
-        authNavGraph(navController)
-    }
-}
-
-fun NavGraphBuilder.pickBookNavGraph(navController: NavHostController) {
-    navigation(
-        route = Application.PICK_BOOK,
-        startDestination = UserBookScreen.PICK_BOOK
-    ) {
         composable(
-            route = UserBookScreen.PICK_BOOK
+            route = Application.PICK_BOOK,
+            enterTransition = {
+                when (initialState.destination.route) {
+                    Application.USER_BOOK ->
+                        slideInHorizontally(
+                            initialOffsetX = { it },
+                            animationSpec = tween(
+                                durationMillis = time,
+                                easing = FastOutSlowInEasing
+                            )
+                        ).apply { Log.d("PICK_BOOK", "enter") }
+
+                    else -> null
+                }
+            },
+            popExitTransition = {
+                when (targetState.destination.route) {
+                    Application.USER_BOOK ->
+                        slideOutHorizontally(
+                            targetOffsetX = { it },
+                            animationSpec = tween(
+                                durationMillis = time,
+                                easing = FastOutSlowInEasing
+                            )
+                        ).apply { Log.d("PICK_BOOK", "popExit") }
+
+                    else -> null
+                }
+            }
         ) {
             PickBookScreen(navController)
         }
-    }
-}
-
-fun NavGraphBuilder.filtersNavGraph(navController: NavHostController) {
-    val time = 800
-    navigation(
-        route = Application.FILTER,
-        startDestination = SearchScreen.FILTER
-    ) {
         composable(
-            route = SearchScreen.FILTER,
+            route = Application.FILTER,
             enterTransition = {
                 when (initialState.destination.route) {
                     Application.SEARCH ->
@@ -202,17 +238,8 @@ fun NavGraphBuilder.filtersNavGraph(navController: NavHostController) {
         ) {
             FilterScreen(navController = navController)
         }
-    }
-}
-
-fun NavGraphBuilder.booksNavGraph(navController: NavHostController) {
-    val time = 500
-    navigation(
-        route = Application.BOOK_INFO,
-        startDestination = BookInformationScreen.BOOK_INFO
-    ) {
         composable(
-            route = BookInformationScreen.BOOK_INFO,
+            route = Application.BOOK_INFO + "/{bookId}",
             enterTransition = {
                 when (initialState.destination.route) {
                     Application.SEARCH ->
@@ -229,7 +256,7 @@ fun NavGraphBuilder.booksNavGraph(navController: NavHostController) {
             },
             exitTransition = {
                 when (targetState.destination.route) {
-                    BookInformationScreen.REVIEW -> {
+                    Application.REVIEW -> {
                         slideOutHorizontally(
                             targetOffsetX = { -(it / 2) },
                             animationSpec = tween(
@@ -244,7 +271,7 @@ fun NavGraphBuilder.booksNavGraph(navController: NavHostController) {
             },
             popEnterTransition = {
                 when (initialState.destination.route) {
-                    BookInformationScreen.REVIEW ->
+                    Application.REVIEW ->
                         slideInHorizontally(
                             initialOffsetX = { -(it / 2) },
                             animationSpec = tween(
@@ -276,10 +303,10 @@ fun NavGraphBuilder.booksNavGraph(navController: NavHostController) {
             }
         }
         composable(
-            route = BookInformationScreen.REVIEW,
+            route = Application.REVIEW,
             enterTransition = {
                 when (initialState.destination.route) {
-                    BookInformationScreen.BOOK_INFO ->
+                    Application.BOOK_INFO ->
                         slideInHorizontally(
                             initialOffsetX = { it },
                             animationSpec = tween(
@@ -293,7 +320,7 @@ fun NavGraphBuilder.booksNavGraph(navController: NavHostController) {
             },
             popExitTransition = {
                 when (targetState.destination.route) {
-                    BookInformationScreen.BOOK_INFO ->
+                    Application.BOOK_INFO ->
                         slideOutHorizontally(
                             targetOffsetX = { it },
                             animationSpec = tween(
@@ -308,17 +335,8 @@ fun NavGraphBuilder.booksNavGraph(navController: NavHostController) {
         ) {
             AddReviewScreen(navController = navController)
         }
-    }
-}
-
-fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
-    val time = 500
-    navigation(
-        route = Application.AUTHORIZATION,
-        startDestination = ProfileScreen.AUTHORIZATION
-    ) {
         composable(
-            route = ProfileScreen.AUTHORIZATION,
+            route = Application.AUTHORIZATION,
             enterTransition = {
                 when (initialState.destination.route) {
                     Application.PROFILE ->
@@ -335,7 +353,7 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
             },
             exitTransition = {
                 when (targetState.destination.route) {
-                    ProfileScreen.REGISTRATION -> {
+                    Application.REGISTRATION -> {
                         slideOutVertically(
                             targetOffsetY = { it/it },
                             animationSpec = tween(
@@ -350,7 +368,7 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
             },
             popEnterTransition = {
                 when (initialState.destination.route) {
-                    ProfileScreen.REGISTRATION ->
+                    Application.REGISTRATION ->
                         slideInVertically(
                             initialOffsetY = { it/it },
                             animationSpec = tween(
@@ -380,10 +398,10 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
             AuthScreen(navController = navController)
         }
         composable(
-            route = ProfileScreen.REGISTRATION,
+            route = Application.REGISTRATION,
             enterTransition = {
                 when (initialState.destination.route) {
-                    ProfileScreen.AUTHORIZATION ->
+                    Application.AUTHORIZATION ->
                         slideInVertically(
                             initialOffsetY = { -it },
                             animationSpec = tween(
@@ -397,7 +415,7 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
             },
             popExitTransition = {
                 when (targetState.destination.route) {
-                    ProfileScreen.AUTHORIZATION ->
+                    Application.AUTHORIZATION ->
                         slideOutVertically(
                             targetOffsetY = { -it },
                             animationSpec = tween(

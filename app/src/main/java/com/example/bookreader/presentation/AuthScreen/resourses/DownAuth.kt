@@ -39,6 +39,7 @@ import androidx.navigation.NavController
 import com.example.bookreader.R
 import com.example.bookreader.presentation.ui.theme.BlueDark
 import com.example.bookreader.presentation.ui.theme.TextLight
+import com.example.bookreader.presentation.utils.Application
 import com.example.bookreader.presentation.utils.ProfileScreen
 import com.example.bookreader.presentation.utils.Routes
 
@@ -182,7 +183,7 @@ fun DownAuth(
         TextButton(
             modifier = Modifier.layoutId("registration"),
             onClick = {
-                navController.navigate(ProfileScreen.REGISTRATION)
+                navController.navigate(Application.REGISTRATION)
             }
         ) {
             Text(

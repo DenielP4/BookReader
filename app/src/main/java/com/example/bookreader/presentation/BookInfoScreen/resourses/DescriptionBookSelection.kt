@@ -14,13 +14,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
+import com.example.bookreader.domain.models.BookInfo
 
 @Composable
 fun DescriptionBookSelection(
+    book: BookInfo,
     modifier: Modifier = Modifier
 ) {
-    val descriptionText =
-        "Эта книга про то-то и то-то. Там есть гг и несколько второстепенных героев. А это самое худшее краткое описание.Эта книга про то-то и то-то. Там есть гг и несколько второстепенных героев. А это самое худшее краткое описание.Эта книга про то-то и то-то. Там есть гг и несколько второстепенных героев. А это самое худшее краткое описание.Эта книга про то-то и то-то. Там есть гг и несколько второстепенных героев. А это самое худшее краткое описание.Эта книга про то-то и то-то. Там есть гг и несколько второстепенных героев. А это самое худшее краткое описание.Эта книга про то-то и то-то. Там есть гг и несколько второстепенных героев. А это самое худшее краткое описание.Эта книга про то-то и то-то. Там есть гг и несколько второстепенных героев. А это самое худшее краткое описание.Эта книга про то-то и то-то. Там есть гг и несколько второстепенных героев. А это самое худшее краткое описание."
 
     val constrains = ConstraintSet {
         val description = createRefFor("description")
@@ -40,7 +40,7 @@ fun DescriptionBookSelection(
         ) {
             item {
                 Text(
-                    text = descriptionText,
+                    text = book.description,
                     color = Color.White,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 20.sp,

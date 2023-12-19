@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.bookreader.domain.models.BookInfo
 import com.example.bookreader.presentation.ui.theme.BlueLight
 
 data class TabItem(
@@ -29,6 +30,7 @@ data class TabItem(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BookTableInfo(
+    book: BookInfo,
     modifier: Modifier = Modifier,
     onNavigate: (String) -> Unit
 ) {
@@ -89,12 +91,14 @@ fun BookTableInfo(
                 when (index) {
                     0 -> {
                         DescriptionBookSelection(
+                            book = book,
                             modifier = Modifier.fillMaxSize()
                         )
                     }
 
                     1 -> {
                         ReviewsBookSelection(
+                            book = book,
                             modifier = Modifier.fillMaxSize()
                         ) {
                             onNavigate(it)

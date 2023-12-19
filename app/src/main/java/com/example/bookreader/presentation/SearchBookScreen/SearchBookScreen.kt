@@ -37,6 +37,7 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +57,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.bookreader.R
@@ -68,13 +70,27 @@ import com.example.bookreader.presentation.ui.theme.BlueLight
 import com.example.bookreader.presentation.ui.theme.Border
 import com.example.bookreader.presentation.ui.theme.Orange
 import com.example.bookreader.presentation.ui.theme.TextLight
+import com.example.bookreader.presentation.utils.UiEvent
 
 @Composable
 fun SearchBookScreen(
+    viewModel: SearchBookViewModel = hiltViewModel(),
     onNavigate: (String) -> Unit
 ) {
 
-    val navController = rememberNavController()
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collect { uiEvent ->
+            when (uiEvent) {
+                is UiEvent.Navigate -> {
+                    Log.d("Из лаунча", "${uiEvent.route}")
+                    onNavigate(uiEvent.route)
+                }
+
+                else -> {}
+            }
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -82,6 +98,7 @@ fun SearchBookScreen(
     ) {
         Column {
             SearchCard(
+                viewModel = viewModel,
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(0.16f)
@@ -90,6 +107,7 @@ fun SearchBookScreen(
                 onNavigate(it)
             }
             BookCardSelection(
+                viewModel = viewModel,
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
