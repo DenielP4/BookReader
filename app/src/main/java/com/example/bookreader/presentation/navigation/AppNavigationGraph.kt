@@ -21,6 +21,7 @@ import androidx.navigation.navigation
 import com.example.bookreader.presentation.AddReviewScreen.AddReviewScreen
 import com.example.bookreader.presentation.AuthScreen.AuthScreen
 import com.example.bookreader.presentation.BookInfoScreen.BookInfoScreen
+import com.example.bookreader.presentation.FilterScreen.Filter
 import com.example.bookreader.presentation.FilterScreen.FilterScreen
 import com.example.bookreader.presentation.PickBookScreen.PickBookScreen
 import com.example.bookreader.presentation.ProfileScreen.ProfileScreen
@@ -167,8 +168,10 @@ fun AppNavigationGraph(
                     else -> null
                 }
             },
-        ) {
-            SearchBookScreen() { route ->
+        ) { entry ->
+            val filter = entry.savedStateHandle.get<Filter>("filter")
+            Log.d("На экране поиска", "$filter")
+            SearchBookScreen(filter) { route ->
                 navController.navigate(route)
             }
         }
@@ -206,7 +209,7 @@ fun AppNavigationGraph(
             PickBookScreen(navController)
         }
         composable(
-            route = Application.FILTER,
+            route = Application.FILTER + "/{filter}",
             enterTransition = {
                 when (initialState.destination.route) {
                     Application.SEARCH ->
@@ -236,7 +239,13 @@ fun AppNavigationGraph(
                 }
             },
         ) {
-            FilterScreen(navController = navController)
+            FilterScreen(navController = navController){ filter ->
+                Log.d("Из навигации фильтр", "$filter")
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set("filter", filter)
+                navController.popBackStack()
+            }
         }
         composable(
             route = Application.BOOK_INFO + "/{bookId}",

@@ -1,5 +1,6 @@
 package com.example.bookreader.presentation.FilterScreen.resourses
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -25,16 +27,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.bookreader.presentation.FilterScreen.FilterEvent
+import com.example.bookreader.presentation.FilterScreen.FilterViewModel
 import com.example.bookreader.presentation.ui.theme.Orange
 
-data class RatingToggleInfo(
-    var isChecked: Boolean,
-    val rating: Int
-)
 
-@Preview
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun RatingSection(
+    viewModel: FilterViewModel,
     modifier: Modifier = Modifier
 ) {
     val ratingTab = remember {
@@ -61,20 +62,24 @@ fun RatingSection(
             )
         )
     }
+
+    var curentRating = mutableStateOf<List<Int>>(listOf())
+
     var triState by remember {
         mutableStateOf(ToggleableState.Indeterminate)
     }
     val toggleTriState = {
-        triState = when (triState) {
+        viewModel.triState = when (viewModel.triState) {
             ToggleableState.Indeterminate -> ToggleableState.On
             ToggleableState.On -> ToggleableState.Off
             else -> ToggleableState.On
         }
-        ratingTab.indices.forEach { index ->
-            ratingTab[index] = ratingTab[index].copy(
-                isChecked = triState == ToggleableState.On
+        viewModel.ratingTab.indices.forEach { index ->
+            viewModel.ratingTab[index] = viewModel.ratingTab[index].copy(
+                isChecked = viewModel.triState == ToggleableState.On
             )
         }
+        viewModel.onEvent(FilterEvent.OnChangeAllRating(viewModel.ratingTab.toList()))
     }
 
     Column(
@@ -90,7 +95,7 @@ fun RatingSection(
                 .padding(end = 16.dp)
         ) {
             TriStateCheckbox(
-                state = triState,
+                state = viewModel.triState,
                 onClick = toggleTriState
             )
             Text(
@@ -101,27 +106,28 @@ fun RatingSection(
             )
         }
 
-        ratingTab.forEachIndexed { index, rating ->
-            Log.d("rating", "${rating.rating}")
+        viewModel.ratingTab.forEachIndexed { index, rating ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .padding(start = 32.dp)
                     .clickable {
-                        ratingTab[index] = rating.copy(
+                        viewModel.ratingTab[index] = rating.copy(
                             isChecked = !rating.isChecked
                         )
-                        triState = ToggleableState.Indeterminate
+                        viewModel.triState = ToggleableState.Indeterminate
+                        viewModel.onEvent(FilterEvent.OnChangeAllRating(viewModel.ratingTab.toList()))
                     }
                     .padding(end = 16.dp)
             ) {
                 Checkbox(
                     checked = rating.isChecked,
                     onCheckedChange = { isChecked ->
-                        ratingTab[index] = rating.copy(
+                        viewModel.ratingTab[index] = rating.copy(
                             isChecked = isChecked
                         )
-                        triState = ToggleableState.Indeterminate
+                        viewModel.triState = ToggleableState.Indeterminate
+                        viewModel.onEvent(FilterEvent.OnChangeAllRating(viewModel.ratingTab.toList()))
                     }
                 )
                 Row() {
@@ -133,7 +139,7 @@ fun RatingSection(
                         )
                     }
                     val fold = 5 - rating.rating
-                    if (fold > 0)
+                    if (fold > 0) {
                         repeat(fold) {
                             Icon(
                                 imageVector = Icons.Default.Star,
@@ -141,7 +147,7 @@ fun RatingSection(
                                 tint = Color.Gray
                             )
                         }
-
+                    }
                 }
             }
         }

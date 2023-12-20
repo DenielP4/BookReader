@@ -1,10 +1,8 @@
 package com.example.bookreader.presentation.SearchBookScreen.resourses
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,26 +16,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -45,7 +35,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -54,10 +43,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.layoutId
-import androidx.navigation.NavController
 import com.example.bookreader.R
-import com.example.bookreader.presentation.SearchBookScreen.Filter
+import com.example.bookreader.presentation.SearchBookScreen.FilterGenre
 import com.example.bookreader.presentation.SearchBookScreen.SearchBookEvent
 import com.example.bookreader.presentation.SearchBookScreen.SearchBookViewModel
 import com.example.bookreader.presentation.ui.theme.BlueDark
@@ -78,8 +65,8 @@ fun SearchCard(
             viewModel = viewModel,
             modifier = Modifier
                 .fillMaxWidth()
-        ) {
-            onNavigate(it)
+        ) { event ->
+            viewModel.onEvent(event)
         }
         FilterItem(
             viewModel = viewModel,
@@ -94,7 +81,7 @@ fun SearchCard(
 fun SearchItem(
     viewModel: SearchBookViewModel,
     modifier: Modifier = Modifier,
-    onNavigate: (String) -> Unit
+    onEvent: (SearchBookEvent) -> Unit
 ) {
     val keyboard = LocalSoftwareKeyboardController.current
     val focusRequester = remember {
@@ -158,7 +145,13 @@ fun SearchItem(
 
         )
         IconButton(
-            onClick = { onNavigate(Application.FILTER) },
+            onClick = {
+                onEvent(
+                    SearchBookEvent.OnShowFilterScreen(
+                        Application.FILTER + "/${viewModel.filter}"
+                    )
+                )
+            },
             modifier = Modifier
                 .padding(top = 3.dp)
                 .clip(RoundedCornerShape(10.dp))
@@ -202,7 +195,7 @@ fun FilterItem(
 
 @Composable
 fun BoxFilter(
-    filter: Filter,
+    filter: FilterGenre,
     onClick: () -> Unit
 ) {
     Button(

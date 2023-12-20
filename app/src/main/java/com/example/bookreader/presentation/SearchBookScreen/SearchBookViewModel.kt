@@ -3,14 +3,14 @@ package com.example.bookreader.presentation.SearchBookScreen
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookreader.common.Constants.IMAGE_URL
 import com.example.bookreader.common.Resource
-import com.example.bookreader.data.remote.responses.Book
 import com.example.bookreader.domain.models.BookList
 import com.example.bookreader.domain.repository.BookRepository
+import com.example.bookreader.presentation.FilterScreen.Filter
 import com.example.bookreader.presentation.utils.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -20,14 +20,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchBookViewModel @Inject constructor(
-    private val repository: BookRepository
+    private val repository: BookRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     //Получение книг с сервера
     val bookList = mutableStateOf<List<BookList>>(listOf())
     var loadError = mutableStateOf("")
     var isLoading = mutableStateOf(false)
 
-    //Сохраняем полученные книги в кещ
+    //Сохраняем полученные книги в кеш
     private var cachedBookList = listOf<BookList>()
 
     //Выбран ли жанр книги или нет
@@ -42,23 +43,34 @@ class SearchBookViewModel @Inject constructor(
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
+    var filter = Filter(
+        bookName = "",
+        bookAuthor = "",
+        bookRating = listOf()
+    )
+
     init {
         loadBookList()
-
     }
 
     fun onEvent(event: SearchBookEvent) {
-        when(event){
+        when (event) {
             is SearchBookEvent.OnBookClick -> {
                 sendUiEvent(UiEvent.Navigate(event.route))
                 Log.d("Route", "${event.route}")
             }
-            is SearchBookEvent.OnShowFilterScreen -> TODO()
+
+            is SearchBookEvent.OnShowFilterScreen -> {
+                sendUiEvent(UiEvent.Navigate(event.route))
+            }
+
             is SearchBookEvent.OnTextSearchChange -> {
                 isSearching.value = true
                 searchText.value = event.text
                 bookList.value = cachedBookList.filter { book ->
-                    book.name.lowercase().startsWith(searchText.value.lowercase()) || book.author.lowercase().startsWith(searchText.value.lowercase())
+                    book.name.lowercase()
+                        .startsWith(searchText.value.lowercase()) || book.author.lowercase()
+                        .startsWith(searchText.value.lowercase())
                 }
                 Log.d("текущий поиск", "${bookList.value}")
             }
@@ -71,7 +83,7 @@ class SearchBookViewModel @Inject constructor(
 
             is SearchBookEvent.OnFilterGenre -> {
 
-                if (filterClickCheck.value == event.filter){
+                if (filterClickCheck.value == event.filter) {
                     filterClickCheck.value = ""
                     filterList.replaceAll {
                         it.copy(
@@ -88,10 +100,17 @@ class SearchBookViewModel @Inject constructor(
                     }
                     Log.d("Turn filter", event.filter.lowercase())
                     filterList.sortByDescending { it.onTurn }
-                    bookList.value = cachedBookList.filter { it.genre.lowercase() == event.filter.lowercase() }
+                    bookList.value =
+                        cachedBookList.filter { it.genre.lowercase() == event.filter.lowercase() }
                     Log.d("Filter List", "${bookList.value}")
                 }
 
+            }
+
+            is SearchBookEvent.OnChangeFilter -> {
+                bookList.value = cachedBookList.filter { book ->
+                    book.name == event.filter.bookName && book.author == event.filter.bookAuthor
+                }
             }
         }
     }
@@ -123,6 +142,7 @@ class SearchBookViewModel @Inject constructor(
                     loadError.value = result.message!!
                     isLoading.value = false
                 }
+
                 else -> {}
             }
             cachedBookList = bookList.value
@@ -131,50 +151,50 @@ class SearchBookViewModel @Inject constructor(
 
     }
 
-    private fun sendUiEvent(event: UiEvent){
+    private fun sendUiEvent(event: UiEvent) {
         viewModelScope.launch {
             _uiEvent.send(event)
         }
     }
 
     var filterList = mutableStateListOf(
-            Filter(
-                "ПЬЕСА",
-                false
-            ),
-            Filter(
-                "МИСТИКА",
-                false
-            ),
-            Filter(
-                "ПРИКЛЮЧЕНИЯ",
-                false
-            ),
-            Filter(
-                "СКАЗКА",
-                false
-            ),
-            Filter(
-                "РОМАН",
-                false
-            ),
-            Filter(
-                "КЛАССИКА",
-                false
-            ),
-            Filter(
-                "ПОВЕСТЬ",
-                false
-            ),
-            Filter(
-                "ДРАМА",
-                false
-            ),
-        )
+        FilterGenre(
+            "ПЬЕСА",
+            false
+        ),
+        FilterGenre(
+            "МИСТИКА",
+            false
+        ),
+        FilterGenre(
+            "ПРИКЛЮЧЕНИЯ",
+            false
+        ),
+        FilterGenre(
+            "СКАЗКА",
+            false
+        ),
+        FilterGenre(
+            "РОМАН",
+            false
+        ),
+        FilterGenre(
+            "КЛАССИКА",
+            false
+        ),
+        FilterGenre(
+            "ПОВЕСТЬ",
+            false
+        ),
+        FilterGenre(
+            "ДРАМА",
+            false
+        ),
+    )
 
 }
 
-data class Filter(
+data class FilterGenre(
     val text: String,
     val onTurn: Boolean
 )

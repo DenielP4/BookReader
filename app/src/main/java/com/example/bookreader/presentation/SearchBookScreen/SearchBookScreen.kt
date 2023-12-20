@@ -63,6 +63,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.bookreader.R
 import com.example.bookreader.presentation.AuthScreen.resourses.DownAuth
 import com.example.bookreader.presentation.AuthScreen.resourses.UpAuth
+import com.example.bookreader.presentation.FilterScreen.Filter
 import com.example.bookreader.presentation.SearchBookScreen.resourses.BookCardSelection
 import com.example.bookreader.presentation.SearchBookScreen.resourses.SearchCard
 import com.example.bookreader.presentation.ui.theme.BlueDark
@@ -74,6 +75,7 @@ import com.example.bookreader.presentation.utils.UiEvent
 
 @Composable
 fun SearchBookScreen(
+    filter: Filter?,
     viewModel: SearchBookViewModel = hiltViewModel(),
     onNavigate: (String) -> Unit
 ) {
@@ -88,6 +90,17 @@ fun SearchBookScreen(
 
                 else -> {}
             }
+        }
+    }
+
+    if (filter != null) {
+        viewModel.filter = filter
+    }
+
+
+    LaunchedEffect(viewModel.filter) {
+        if (viewModel.filter != null) {
+            viewModel.onEvent(SearchBookEvent.OnChangeFilter(viewModel.filter!!))
         }
     }
 

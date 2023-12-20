@@ -22,8 +22,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -38,10 +43,15 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.example.bookreader.presentation.FilterScreen.FilterEvent
+import com.example.bookreader.presentation.FilterScreen.FilterViewModel
 import com.example.bookreader.presentation.ui.theme.BlueDark
+import com.example.bookreader.presentation.utils.Application
+
 
 @Composable
 fun MainFilterSection(
+    viewModel: FilterViewModel,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
@@ -52,7 +62,8 @@ fun MainFilterSection(
         val nameBook = createRefFor("nameBook")
         val authorBook = createRefFor("authorBook")
         val ratingFilter = createRefFor("ratingFilter")
-        val button = createRefFor("button")
+        val buttonConfirm = createRefFor("buttonConfirm")
+        val buttonCancel = createRefFor("buttonCancel")
 
         constrain(anim) {
             top.linkTo(parent.top, 10.dp)
@@ -73,10 +84,15 @@ fun MainFilterSection(
             top.linkTo(authorBook.bottom, 10.dp)
             start.linkTo(authorBook.start)
         }
-        constrain(button) {
+        constrain(buttonConfirm) {
+            bottom.linkTo(parent.bottom, 10.dp)
+            start.linkTo(buttonCancel.end)
+            end.linkTo(parent.end)
+        }
+        constrain(buttonCancel) {
             bottom.linkTo(parent.bottom, 10.dp)
             start.linkTo(parent.start)
-            end.linkTo(parent.end)
+            end.linkTo(buttonConfirm.start)
         }
     }
 
@@ -86,6 +102,11 @@ fun MainFilterSection(
     var author by remember {
         mutableStateOf("")
     }
+
+    val focusRequester = remember {
+        FocusRequester()
+    }
+    val focusManager = LocalFocusManager.current
 
     ConstraintLayout(
         constraintSet = constrains,
@@ -102,9 +123,11 @@ fun MainFilterSection(
             )
         }
         TextField(
-            modifier = Modifier.layoutId("nameBook"),
-            value = name,
-            onValueChange = { name = it },
+            modifier = Modifier
+                .layoutId("nameBook")
+                .focusRequester(focusRequester),
+            value = viewModel.bookNameText.value,
+            onValueChange = { viewModel.bookNameText.value = it },
             textStyle = LocalTextStyle.current.copy(
                 textAlign = TextAlign.Left
             ),
@@ -129,7 +152,8 @@ fun MainFilterSection(
                     imageVector = Icons.Outlined.Close,
                     contentDescription = "Delete",
                     modifier = Modifier.clickable {
-                        name = ""
+                        viewModel.onEvent(FilterEvent.OnDeleteName)
+                        focusManager.clearFocus()
                     }
                 )
             },
@@ -140,9 +164,11 @@ fun MainFilterSection(
             )
         )
         TextField(
-            modifier = Modifier.layoutId("authorBook"),
-            value = author,
-            onValueChange = { author = it },
+            modifier = Modifier
+                .layoutId("authorBook")
+                .focusRequester(focusRequester),
+            value = viewModel.bookAuthorText.value,
+            onValueChange = { viewModel.bookAuthorText.value = it },
             textStyle = LocalTextStyle.current.copy(
                 textAlign = TextAlign.Left
             ),
@@ -167,7 +193,8 @@ fun MainFilterSection(
                     imageVector = Icons.Outlined.Close,
                     contentDescription = "Delete",
                     modifier = Modifier.clickable {
-                        author = ""
+                        viewModel.onEvent(FilterEvent.OnDeleteAuthor)
+                        focusManager.clearFocus()
                     }
                 )
             },
@@ -177,10 +204,17 @@ fun MainFilterSection(
                 imeAction = ImeAction.Next
             )
         )
-        RatingSection(modifier = Modifier.layoutId("ratingFilter"))
+        RatingSection(
+            viewModel = viewModel,
+            modifier = Modifier.layoutId("ratingFilter")
+        )
         Button(
-            modifier = Modifier.layoutId("button"),
-            onClick = { /*TODO*/ },
+            modifier = Modifier.layoutId("buttonConfirm"),
+            onClick = {
+                viewModel.onEvent(
+                    FilterEvent.OnConfirm
+                )
+            },
             colors = ButtonDefaults.buttonColors(BlueDark),
             shape = RoundedCornerShape(18.dp),
             contentPadding = PaddingValues(
@@ -190,6 +224,26 @@ fun MainFilterSection(
         ) {
             Text(
                 text = "ПРИМЕНИТЬ",
+                fontSize = 20.sp,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        Button(
+            modifier = Modifier.layoutId("buttonCancel"),
+            onClick = {
+                viewModel.onEvent(FilterEvent.OnCancel)
+                focusManager.clearFocus()
+            },
+            colors = ButtonDefaults.buttonColors(BlueDark),
+            shape = RoundedCornerShape(18.dp),
+            contentPadding = PaddingValues(
+                horizontal = 20.dp,
+                vertical = 15.dp
+            )
+        ) {
+            Text(
+                text = "ОЧИСТИТЬ",
                 fontSize = 20.sp,
                 color = Color.White,
                 fontWeight = FontWeight.Bold
