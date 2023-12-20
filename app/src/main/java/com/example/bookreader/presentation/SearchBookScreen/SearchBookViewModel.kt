@@ -108,14 +108,38 @@ class SearchBookViewModel @Inject constructor(
             }
 
             is SearchBookEvent.OnChangeFilter -> {
-                bookList.value = cachedBookList.filter { book ->
-                    book.name == event.filter.bookName && book.author == event.filter.bookAuthor
-                }
+                filterBookList(event.filter)
             }
         }
     }
 
-    fun loadBookList() {
+    private fun filterBookList(filterSettings: Filter) {
+        if (filterSettings.bookName == "" && filter.bookAuthor == "" && filterSettings.bookRating?.isEmpty() == true){
+            Log.d("ПУСТО", "МЫ ТУТ")
+            bookList.value = cachedBookList
+        } else {
+            Log.d("НЕ ПУСТО", "ТУТ")
+            bookList.value = cachedBookList
+            if (filterSettings.bookName != ""){
+                bookList.value = bookList.value.filter {
+                    it.name.lowercase() == filterSettings.bookName?.lowercase()
+                }
+            }
+            if (filterSettings.bookAuthor != ""){
+                bookList.value = bookList.value.filter {
+                    it.author.lowercase() == filterSettings.bookAuthor?.lowercase()
+                }
+            }
+            if (filterSettings.bookRating?.isEmpty() == false) {
+                bookList.value = bookList.value.filter {
+                    filterSettings.bookRating.contains(it.rate)
+                }
+            }
+        }
+
+    }
+
+    private fun loadBookList() {
         isLoading.value = true
         loadError.value = ""
         viewModelScope.launch {
