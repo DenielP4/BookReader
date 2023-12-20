@@ -15,11 +15,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.bookreader.presentation.FilterScreen.resourses.MainFilterSection
 import com.example.bookreader.presentation.FilterScreen.resourses.TopFilterSection
+import com.example.bookreader.presentation.SearchBookScreen.SearchBookEvent
 import com.example.bookreader.presentation.utils.UiEvent
 
 
 @Composable
 fun FilterScreen(
+    filter: Filter?,
     viewModel: FilterViewModel = hiltViewModel(),
     navController: NavController,
     onPopBackStack: (Filter) -> Unit
@@ -29,11 +31,21 @@ fun FilterScreen(
         viewModel.uiEvent.collect { uiEvent ->
             when (uiEvent) {
                 is UiEvent.PopBackStack -> {
-                    onPopBackStack(viewModel.filter.value!!)
+                    onPopBackStack(viewModel.filter)
                 }
 
                 else -> {}
             }
+        }
+    }
+
+    if (filter != null) {
+        viewModel.filter = filter
+    }
+
+    LaunchedEffect(viewModel.filter) {
+        if (viewModel.filter != null) {
+            viewModel.onEvent(FilterEvent.OnChangeFilter(viewModel.filter))
         }
     }
 

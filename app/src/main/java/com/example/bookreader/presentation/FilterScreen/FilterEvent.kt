@@ -2,6 +2,7 @@ package com.example.bookreader.presentation.FilterScreen
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.example.bookreader.presentation.FilterScreen.resourses.RatingToggleInfo
+import com.example.bookreader.presentation.SearchBookScreen.SearchBookEvent
 
 sealed class FilterEvent {
     data class OnBookNameChange(val name: String): FilterEvent()
@@ -13,4 +14,5 @@ sealed class FilterEvent {
     object OnExit: FilterEvent()
     object OnDeleteName: FilterEvent()
     object OnDeleteAuthor: FilterEvent()
+    data class OnChangeFilter(val filter: Filter): FilterEvent()
 }

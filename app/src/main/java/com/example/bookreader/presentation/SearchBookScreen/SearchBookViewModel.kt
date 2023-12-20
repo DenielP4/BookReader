@@ -114,7 +114,7 @@ class SearchBookViewModel @Inject constructor(
     }
 
     private fun filterBookList(filterSettings: Filter) {
-        if (filterSettings.bookName == "" && filter.bookAuthor == "" && filterSettings.bookRating?.isEmpty() == true){
+        if (filterSettings.bookName == "" && filterSettings.bookAuthor == "" && filterSettings.bookRating?.isEmpty() == true){
             Log.d("ПУСТО", "МЫ ТУТ")
             bookList.value = cachedBookList
         } else {

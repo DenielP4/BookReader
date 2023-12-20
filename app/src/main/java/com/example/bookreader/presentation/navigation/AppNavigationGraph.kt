@@ -17,6 +17,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.bookreader.presentation.AddReviewScreen.AddReviewScreen
 import com.example.bookreader.presentation.AuthScreen.AuthScreen
@@ -170,8 +171,11 @@ fun AppNavigationGraph(
             },
         ) { entry ->
             val filter = entry.savedStateHandle.get<Filter>("filter")
-            Log.d("На экране поиска", "$filter")
+            Log.d("Пришло из фильтра", "$filter")
             SearchBookScreen(filter) { route ->
+                navController.currentBackStackEntry
+                    ?.savedStateHandle
+                    ?.set("filter", filter)
                 navController.navigate(route)
             }
         }
@@ -238,8 +242,10 @@ fun AppNavigationGraph(
                     else -> null
                 }
             },
-        ) {
-            FilterScreen(navController = navController){ filter ->
+        ) { entry ->
+            val filterCur = navController.previousBackStackEntry?.savedStateHandle?.get<Filter>("filter")
+            Log.d("Пришло из поиска", "$filterCur")
+            FilterScreen(filterCur, navController = navController){ filter ->
                 Log.d("Из навигации фильтр", "$filter")
                 navController.previousBackStackEntry
                     ?.savedStateHandle

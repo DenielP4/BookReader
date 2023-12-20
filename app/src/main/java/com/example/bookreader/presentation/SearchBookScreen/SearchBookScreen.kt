@@ -84,7 +84,7 @@ fun SearchBookScreen(
         viewModel.uiEvent.collect { uiEvent ->
             when (uiEvent) {
                 is UiEvent.Navigate -> {
-                    Log.d("Из лаунча", "${uiEvent.route}")
+                    Log.d("Навигация из поиска в фильтр", "${uiEvent.route}")
                     onNavigate(uiEvent.route)
                 }
 
