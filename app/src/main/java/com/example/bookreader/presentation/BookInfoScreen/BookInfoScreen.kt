@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,6 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.bookreader.presentation.BookInfoScreen.resourses.BookCardTop
 import com.example.bookreader.presentation.BookInfoScreen.resourses.BookTableInfo
+import com.example.bookreader.presentation.UserBookScreen.UserBookEvent
 
 
 @Composable
@@ -29,6 +31,11 @@ fun BookInfoScreen(
     viewModel: BookInfoViewModel = hiltViewModel(),
     onNavigate: (String) -> Unit
 ) {
+
+    LaunchedEffect(true) {
+        viewModel.onEvent(BookInfoEvent.OnLoad)
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()

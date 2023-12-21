@@ -8,8 +8,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookreader.common.Constants.IMAGE_URL
 import com.example.bookreader.common.Resource
+import com.example.bookreader.data.locale.UserInfo
 import com.example.bookreader.domain.models.BookList
 import com.example.bookreader.domain.repository.BookRepository
+import com.example.bookreader.domain.repository.UserInfoRepository
 import com.example.bookreader.presentation.FilterScreen.Filter
 import com.example.bookreader.presentation.utils.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchBookViewModel @Inject constructor(
     private val repository: BookRepository,
+    private val repositoryUser: UserInfoRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     //Получение книг с сервера
@@ -42,6 +45,8 @@ class SearchBookViewModel @Inject constructor(
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
+
+    var user: UserInfo? = null
 
     var filter = Filter(
         bookName = "",
@@ -110,7 +115,36 @@ class SearchBookViewModel @Inject constructor(
             is SearchBookEvent.OnChangeFilter -> {
                 filterBookList(event.filter)
             }
+
+            SearchBookEvent.OnLoad -> {
+                loadUser()
+            }
         }
+    }
+
+    private fun loadUser() {
+        isLoading.value = true
+        loadError.value = ""
+        viewModelScope.launch {
+            val result = repositoryUser.getUser()
+            when (result) {
+                is Resource.Success -> {
+                    loadError.value = ""
+                    isLoading.value = false
+                    user = result.data
+                }
+
+                is Resource.Error -> {
+                    loadError.value = result.message!!
+                    isLoading.value = false
+                }
+
+                else -> {}
+            }
+            Log.d("Обновил поиск", "$user")
+
+        }
+
     }
 
     private fun filterBookList(filterSettings: Filter) {

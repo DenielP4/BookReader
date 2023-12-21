@@ -1,5 +1,6 @@
 package com.example.bookreader.presentation.UserBookScreen
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,6 +41,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -64,6 +66,7 @@ import androidx.navigation.NavController
 import com.example.bookreader.R
 import com.example.bookreader.presentation.BookInfoScreen.resourses.BookCardTop
 import com.example.bookreader.presentation.BookInfoScreen.resourses.BookTableInfo
+import com.example.bookreader.presentation.ProfileScreen.ProfileEvent
 import com.example.bookreader.presentation.SearchBookScreen.SearchBookViewModel
 import com.example.bookreader.presentation.SearchBookScreen.resourses.BookCardItem
 import com.example.bookreader.presentation.UserBookScreen.resourses.ActuallyBookCardTop
@@ -76,8 +79,14 @@ import com.example.bookreader.presentation.ui.theme.Orange
 
 @Composable
 fun UserBookScreen(
+    viewModel: UserBookViewModels = hiltViewModel(),
     onNavigate: (String) -> Unit
 ) {
+
+    LaunchedEffect(true) {
+        viewModel.onEvent(UserBookEvent.OnLoad)
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
