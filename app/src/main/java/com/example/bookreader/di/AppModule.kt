@@ -5,9 +5,11 @@ import com.example.bookreader.data.remote.BooksApi
 import com.example.bookreader.data.repository.BookRepositoryImpl
 import com.example.bookreader.data.repository.DeskOfBookRepositoryImpl
 import com.example.bookreader.data.repository.ReviewRepositoryImpl
+import com.example.bookreader.data.repository.UserRepositoryImpl
 import com.example.bookreader.domain.repository.BookRepository
 import com.example.bookreader.domain.repository.DeskOfBookRepository
 import com.example.bookreader.domain.repository.ReviewRepository
+import com.example.bookreader.domain.repository.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,6 +30,12 @@ object AppModule {
 
     private val okHttpBuilder = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
+
+    @Singleton
+    @Provides
+    fun provideUserRepository(api: BooksApi) : UserRepository {
+        return UserRepositoryImpl(api)
+    }
 
     @Singleton
     @Provides

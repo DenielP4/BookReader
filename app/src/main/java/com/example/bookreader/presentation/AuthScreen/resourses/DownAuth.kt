@@ -22,7 +22,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -37,6 +40,8 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
 import androidx.navigation.NavController
 import com.example.bookreader.R
+import com.example.bookreader.presentation.AuthScreen.AuthEvent
+import com.example.bookreader.presentation.AuthScreen.AuthViewModel
 import com.example.bookreader.presentation.ui.theme.BlueDark
 import com.example.bookreader.presentation.ui.theme.TextLight
 import com.example.bookreader.presentation.utils.Application
@@ -45,6 +50,7 @@ import com.example.bookreader.presentation.utils.Routes
 
 @Composable
 fun DownAuth(
+    viewModel: AuthViewModel,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
@@ -87,14 +93,24 @@ fun DownAuth(
     var vissible by remember {
         mutableStateOf(false)
     }
+
+    val focusRequester = remember {
+        FocusRequester()
+    }
+    val focusManager = LocalFocusManager.current
+
     ConstraintLayout(
         constraintSet = constrains,
         modifier = modifier
     ) {
         TextField(
-            modifier = Modifier.layoutId("login"),
-            value = loginText,
-            onValueChange = { loginText = it },
+            modifier = Modifier
+                .layoutId("login")
+                .focusRequester(focusRequester),
+            value = viewModel.userNameText.value,
+            onValueChange = { name ->
+                viewModel.onEvent(AuthEvent.OnNameTextChange(name))
+            },
             textStyle = LocalTextStyle.current.copy(
                 textAlign = TextAlign.Left
             ),
@@ -120,7 +136,8 @@ fun DownAuth(
                     imageVector = Icons.Outlined.Close,
                     contentDescription = "Delete",
                     modifier = Modifier.clickable {
-                        loginText = ""
+                        viewModel.onEvent(AuthEvent.OnDeleteNameText)
+                        focusManager.clearFocus()
                     }
                 )
             },
@@ -133,8 +150,10 @@ fun DownAuth(
         )
         TextField(
             modifier = Modifier.layoutId("password"),
-            value = passwordText,
-            onValueChange = { passwordText = it },
+            value = viewModel.userPasswordText.value,
+            onValueChange = { password ->
+                viewModel.onEvent(AuthEvent.OnPasswordTextChange(password))
+            },
             textStyle = LocalTextStyle.current.copy(
                 textAlign = TextAlign.Left
             ),
@@ -157,18 +176,18 @@ fun DownAuth(
             },
             trailingIcon = {
                 Icon(
-                    painter = if (vissible)
+                    painter = if (viewModel.visiblePassword.value)
                         painterResource(id = R.drawable.ic_eyes)
                     else
                         painterResource(id = R.drawable.ic_eyes_not),
                     contentDescription = "Visible",
                     modifier = Modifier.clickable {
-                        vissible = !vissible
+                        viewModel.onEvent(AuthEvent.OnChangeVisiblePassword(!viewModel.visiblePassword.value))
                     }
                 )
             },
             isError = false,
-            visualTransformation = if (vissible) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (viewModel.visiblePassword.value) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Next
@@ -183,7 +202,7 @@ fun DownAuth(
         TextButton(
             modifier = Modifier.layoutId("registration"),
             onClick = {
-                navController.navigate(Application.REGISTRATION)
+                viewModel.onEvent(AuthEvent.OnNavigateToRegistration(Application.REGISTRATION))
             }
         ) {
             Text(
@@ -194,7 +213,9 @@ fun DownAuth(
         }
         Button(
             modifier = Modifier.layoutId("enter"),
-            onClick = { /*TODO*/ },
+            onClick = {
+                viewModel.onEvent(AuthEvent.OnUserLogin)
+            },
             colors = ButtonDefaults.buttonColors(BlueDark),
             shape = RoundedCornerShape(18.dp),
             contentPadding = PaddingValues(

@@ -410,7 +410,9 @@ fun AppNavigationGraph(
                 }
             },
         ) {
-            AuthScreen(navController = navController)
+            AuthScreen(navController = navController){ route ->
+                navController.navigate(route)
+            }
         }
         composable(
             route = Application.REGISTRATION,
@@ -443,7 +445,9 @@ fun AppNavigationGraph(
                 }
             },
         ) {
-            RegScreen(navController = navController)
+            RegScreen(navController = navController) {
+                navController.popBackStack()
+            }
         }
     }
 }

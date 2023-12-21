@@ -22,7 +22,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -37,12 +40,15 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
 import androidx.navigation.NavController
 import com.example.bookreader.R
+import com.example.bookreader.presentation.RegScreen.RegEvent
+import com.example.bookreader.presentation.RegScreen.RegViewModel
 import com.example.bookreader.presentation.ui.theme.BlueDark
 import com.example.bookreader.presentation.ui.theme.TextLight
 import com.example.bookreader.presentation.utils.Routes
 
 @Composable
 fun DownReg(
+    viewModel: RegViewModel,
     modifier: Modifier = Modifier
 ) {
     val constrains = ConstraintSet {
@@ -76,9 +82,7 @@ fun DownReg(
         }
     }
 
-    var loginText by remember {
-        mutableStateOf("")
-    }
+
     var passwordText by remember {
         mutableStateOf("")
     }
@@ -91,14 +95,24 @@ fun DownReg(
     var vissibleRepeat by remember {
         mutableStateOf(false)
     }
+
+    val focusRequester = remember {
+        FocusRequester()
+    }
+    val focusManager = LocalFocusManager.current
+
     ConstraintLayout(
         constraintSet = constrains,
         modifier = modifier
     ) {
         TextField(
-            modifier = Modifier.layoutId("login"),
-            value = loginText,
-            onValueChange = { loginText = it },
+            modifier = Modifier
+                .layoutId("login")
+                .focusRequester(focusRequester),
+            value = viewModel.userNameText.value,
+            onValueChange = { name ->
+                viewModel.onEvent(RegEvent.OnNameTextChange(name))
+            },
             textStyle = LocalTextStyle.current.copy(
                 textAlign = TextAlign.Left
             ),
@@ -106,7 +120,9 @@ fun DownReg(
             shape = RoundedCornerShape(10.dp),
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+                unfocusedIndicatorColor = Color.Transparent,
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White
             ),
             placeholder = {
                 Text(text = "Логин")
@@ -122,7 +138,8 @@ fun DownReg(
                     imageVector = Icons.Outlined.Close,
                     contentDescription = "Delete",
                     modifier = Modifier.clickable {
-                        loginText = ""
+                        viewModel.onEvent(RegEvent.OnDeleteNameText)
+                        focusManager.clearFocus()
                     }
                 )
             },
@@ -134,9 +151,13 @@ fun DownReg(
 
         )
         TextField(
-            modifier = Modifier.layoutId("password"),
-            value = passwordText,
-            onValueChange = { passwordText = it },
+            modifier = Modifier
+                .layoutId("password")
+                .focusRequester(focusRequester),
+            value = viewModel.userPasswordText.value,
+            onValueChange = { password ->
+                viewModel.onEvent(RegEvent.OnPasswordTextChange(password))
+            },
             textStyle = LocalTextStyle.current.copy(
                 textAlign = TextAlign.Left
             ),
@@ -144,7 +165,9 @@ fun DownReg(
             shape = RoundedCornerShape(10.dp),
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+                unfocusedIndicatorColor = Color.Transparent,
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White
             ),
             placeholder = {
                 Text(text = "Пароль")
@@ -157,18 +180,18 @@ fun DownReg(
             },
             trailingIcon = {
                 Icon(
-                    painter = if (vissible)
+                    painter = if (viewModel.visiblePassword.value)
                         painterResource(id = R.drawable.ic_eyes)
                     else
                         painterResource(id = R.drawable.ic_eyes_not),
                     contentDescription = "Visible",
                     modifier = Modifier.clickable {
-                        vissible = !vissible
+                        viewModel.onEvent(RegEvent.OnChangeVisiblePassword(!viewModel.visiblePassword.value))
                     }
                 )
             },
             isError = false,
-            visualTransformation = if (vissible) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (viewModel.visiblePassword.value) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Next
@@ -181,9 +204,13 @@ fun DownReg(
 
         )
         TextField(
-            modifier = Modifier.layoutId("repeatPassword"),
-            value = repeatPasswordText,
-            onValueChange = { repeatPasswordText = it },
+            modifier = Modifier
+                .layoutId("repeatPassword")
+                .focusRequester(focusRequester),
+            value = viewModel.userRepeatPasswordText.value,
+            onValueChange = { repeatPassword ->
+                viewModel.onEvent(RegEvent.OnRepeatPasswordTextChange(repeatPassword))
+            },
             textStyle = LocalTextStyle.current.copy(
                 textAlign = TextAlign.Left
             ),
@@ -191,7 +218,9 @@ fun DownReg(
             shape = RoundedCornerShape(10.dp),
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+                unfocusedIndicatorColor = Color.Transparent,
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White
             ),
             placeholder = {
                 Text(text = "Повторить пароль")
@@ -204,18 +233,18 @@ fun DownReg(
             },
             trailingIcon = {
                 Icon(
-                    painter = if (vissibleRepeat) 
-                                painterResource(id = R.drawable.ic_eyes)
-                            else
-                                painterResource(id = R.drawable.ic_eyes_not),
+                    painter = if (viewModel.visibleRepeatPassword.value)
+                        painterResource(id = R.drawable.ic_eyes)
+                    else
+                        painterResource(id = R.drawable.ic_eyes_not),
                     contentDescription = "Visible",
                     modifier = Modifier.clickable {
-                        vissibleRepeat = !vissibleRepeat
+                        viewModel.onEvent(RegEvent.OnChangeVisibleRepeatPassword(!viewModel.visibleRepeatPassword.value))
                     }
                 )
             },
             isError = false,
-            visualTransformation = if (vissibleRepeat) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (viewModel.visibleRepeatPassword.value) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Next
@@ -229,7 +258,9 @@ fun DownReg(
         )
         Button(
             modifier = Modifier.layoutId("enter"),
-            onClick = { /*TODO*/ },
+            onClick = {
+                      viewModel.onEvent(RegEvent.OnUserRegistration)
+            },
             colors = ButtonDefaults.buttonColors(BlueDark),
             shape = RoundedCornerShape(18.dp),
             contentPadding = PaddingValues(

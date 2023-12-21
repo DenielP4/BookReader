@@ -1,8 +1,11 @@
 package com.example.bookreader.data.remote
 
-import com.example.bookreader.common.Resource
 import com.example.bookreader.data.remote.responses.Book
 import com.example.bookreader.data.remote.responses.Review
+import com.example.bookreader.data.remote.responses.User
+import com.example.bookreader.domain.models.UserAuth
+import com.example.bookreader.domain.models.UserReg
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -18,6 +21,16 @@ interface BooksApi {
     suspend fun getBookInfo(
         @Path("id") id: Int
     ) : Book
+
+    @POST("user/registration")
+    suspend fun registration(
+        @Body user: UserReg
+    ) : Response<User>
+
+    @POST("user/login")
+    suspend fun login(
+        @Body user: UserAuth
+    ) : Response<User>
 
     @POST("book/addReview/{id}")
     suspend fun addReview(
