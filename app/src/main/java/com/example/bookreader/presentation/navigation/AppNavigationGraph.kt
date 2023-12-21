@@ -122,7 +122,7 @@ fun AppNavigationGraph(
             route = Application.SEARCH,
             exitTransition = {
                 when (targetState.destination.route) {
-                    Application.BOOK_INFO -> {
+                    Application.BOOK_INFO + "/{bookId}" -> {
                         slideOutHorizontally(
                             targetOffsetX = { -(it / 2) },
                             animationSpec = tween(
@@ -132,7 +132,7 @@ fun AppNavigationGraph(
                         ).apply { Log.d("SearchBook", "exit") }
                     }
 
-                    Application.FILTER -> {
+                    Application.FILTER + "/{filter}" -> {
                         slideOutVertically(
                             targetOffsetY = { -(it / it) },
                             animationSpec = tween(
@@ -147,7 +147,7 @@ fun AppNavigationGraph(
             },
             popEnterTransition = {
                 when (initialState.destination.route) {
-                    Application.BOOK_INFO ->
+                    Application.BOOK_INFO + "/{bookId}" ->
                         slideInHorizontally(
                             initialOffsetX = { -(it / 2) },
                             animationSpec = tween(
@@ -156,7 +156,7 @@ fun AppNavigationGraph(
                             )
                         ).apply { Log.d("SearchBook", "popEnter") }
 
-                    Application.FILTER -> {
+                    Application.FILTER + "/{filter}" -> {
                         slideInVertically(
                             initialOffsetY = { 0 },
                             animationSpec = tween(
@@ -322,7 +322,7 @@ fun AppNavigationGraph(
             route = Application.REVIEW,
             enterTransition = {
                 when (initialState.destination.route) {
-                    Application.BOOK_INFO ->
+                    Application.BOOK_INFO + "/{bookId}"->
                         slideInHorizontally(
                             initialOffsetX = { it },
                             animationSpec = tween(
@@ -336,7 +336,7 @@ fun AppNavigationGraph(
             },
             popExitTransition = {
                 when (targetState.destination.route) {
-                    Application.BOOK_INFO ->
+                    Application.BOOK_INFO + "/{bookId}" ->
                         slideOutHorizontally(
                             targetOffsetX = { it },
                             animationSpec = tween(
