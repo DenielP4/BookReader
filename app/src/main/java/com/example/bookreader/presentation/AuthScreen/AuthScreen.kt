@@ -68,6 +68,7 @@ fun AuthScreen(
     navController: NavController,
     viewModel: AuthViewModel = hiltViewModel(),
     onNavigate: (String) -> Unit
+
 ) {
 
     val scaffoldState = rememberScaffoldState()

@@ -88,7 +88,7 @@ fun AppNavigationGraph(
                 when (targetState.destination.route) {
                     Application.AUTHORIZATION -> {
                         slideOutVertically(
-                            targetOffsetY = { it/it },
+                            targetOffsetY = { it / it },
                             animationSpec = tween(
                                 durationMillis = time,
                                 easing = FastOutSlowInEasing
@@ -134,7 +134,7 @@ fun AppNavigationGraph(
 
                     Application.FILTER -> {
                         slideOutVertically(
-                            targetOffsetY = { -(it/it) },
+                            targetOffsetY = { -(it / it) },
                             animationSpec = tween(
                                 durationMillis = 1000,
                                 easing = FastOutSlowInEasing
@@ -243,9 +243,10 @@ fun AppNavigationGraph(
                 }
             },
         ) { entry ->
-            val filterCur = navController.previousBackStackEntry?.savedStateHandle?.get<Filter>("filter")
+            val filterCur =
+                navController.previousBackStackEntry?.savedStateHandle?.get<Filter>("filter")
             Log.d("Пришло из поиска", "$filterCur")
-            FilterScreen(filterCur, navController = navController){ filter ->
+            FilterScreen(filterCur, navController = navController) { filter ->
                 Log.d("Из навигации фильтр", "$filter")
                 navController.previousBackStackEntry
                     ?.savedStateHandle
@@ -370,7 +371,7 @@ fun AppNavigationGraph(
                 when (targetState.destination.route) {
                     Application.REGISTRATION -> {
                         slideOutVertically(
-                            targetOffsetY = { it/it },
+                            targetOffsetY = { it / it },
                             animationSpec = tween(
                                 durationMillis = time,
                                 easing = FastOutSlowInEasing
@@ -385,7 +386,7 @@ fun AppNavigationGraph(
                 when (initialState.destination.route) {
                     Application.REGISTRATION ->
                         slideInVertically(
-                            initialOffsetY = { it/it },
+                            initialOffsetY = { it / it },
                             animationSpec = tween(
                                 durationMillis = time,
                                 easing = FastOutSlowInEasing
@@ -410,9 +411,17 @@ fun AppNavigationGraph(
                 }
             },
         ) {
-            AuthScreen(navController = navController){ route ->
-                navController.navigate(route)
-            }
+            AuthScreen(
+                navController = navController,
+                onNavigate = { route ->
+                    navController.navigate(route){
+                        popUpTo(route){
+                            inclusive = false
+                        }
+                    }
+                },
+
+                )
         }
         composable(
             route = Application.REGISTRATION,

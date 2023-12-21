@@ -18,12 +18,15 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
 import androidx.navigation.NavController
 import com.example.bookreader.R
+import com.example.bookreader.presentation.ProfileScreen.ProfileEvent
+import com.example.bookreader.presentation.ProfileScreen.ProfileViewModel
 import com.example.bookreader.presentation.ui.theme.BlueLight
 import com.example.bookreader.presentation.utils.Application
 import com.example.bookreader.presentation.utils.ProfileScreen
 
 @Composable
 fun CardProfile(
+    viewModel: ProfileViewModel,
     modifier: Modifier = Modifier,
     onNavigate: (String) -> Unit
 ) {
@@ -59,7 +62,9 @@ fun CardProfile(
         )
         IconButton(
             modifier = Modifier.layoutId("logOut"),
-            onClick = { onNavigate(Application.AUTHORIZATION) }
+            onClick = {
+                viewModel.onEvent(ProfileEvent.OnClickLogOut(Application.AUTHORIZATION))
+            }
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_logout),

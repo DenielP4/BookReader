@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id ("kotlin-kapt")
     id ("com.google.dagger.hilt.android")
+    id("com.google.devtools.ksp")
     id ("kotlin-android")
 }
 
@@ -18,10 +19,17 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+//        kapt {
+//            arguments {
+//                arg("room.schemaLocation", "$projectDir")
+//            }
+//        }
         vectorDrawables {
             useSupportLibrary = true
         }
     }
+
+
 
     buildTypes {
         release {
@@ -115,7 +123,7 @@ dependencies {
     //Room
     implementation("androidx.room:room-runtime:2.5.0")
     implementation("androidx.room:room-ktx:2.5.0")
-    kapt("androidx.room:room-compiler:2.5.0")
-
+    ksp("androidx.room:room-compiler:2.5.0")
+    //Gson Converter
     implementation("com.google.code.gson:gson:2.8.8")
 }

@@ -4,9 +4,11 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.bookreader.data.locale.UserInfo
 import com.example.bookreader.data.remote.responses.User
 import com.example.bookreader.domain.models.UserAuth
 import com.example.bookreader.domain.models.UserReg
+import com.example.bookreader.domain.repository.UserInfoRepository
 import com.example.bookreader.domain.repository.UserRepository
 import com.example.bookreader.presentation.utils.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val repository: UserRepository
+    private val repository: UserRepository,
+    private val repositoryDb: UserInfoRepository
 ): ViewModel() {
 
 
@@ -36,7 +39,7 @@ class AuthViewModel @Inject constructor(
 
     fun onEvent(event: AuthEvent) {
         when(event) {
-            AuthEvent.OnUserLogin -> {
+            is AuthEvent.OnUserLogin -> {
                 viewModelScope.launch {
                     response = repository.login(
                         UserAuth(
@@ -48,9 +51,19 @@ class AuthViewModel @Inject constructor(
                     if (response.code() == 403) {
                         sendUiEvent(UiEvent.ShowSnackBar("Пользователь не найден!"))
                     } else {
-
+                        Log.d("Пользователь", "${response.body()}")
+                        repositoryDb.saveUser(
+                            UserInfo(
+                                id = null,
+                                name = response.body()?.name,
+                                registerDate = response.body()?.registerDate,
+                                shelf = response.body()?.shelf,
+                                userId = response.body()?.id
+                            )
+                        )
                     }
                 }
+                sendUiEvent(UiEvent.Navigate(event.route))
 
             }
             is AuthEvent.OnNameTextChange -> {

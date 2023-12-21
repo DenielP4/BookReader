@@ -7,7 +7,7 @@ import java.util.Locale
 import java.util.logging.SimpleFormatter
 
 fun ViewModel.getCurrentTime(): String {
-    val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+    val formatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
     val cv = Calendar.getInstance().time
     return formatter.format(cv.time)
 }
