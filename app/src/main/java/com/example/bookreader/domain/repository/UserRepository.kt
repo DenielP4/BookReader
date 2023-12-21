@@ -8,5 +8,6 @@ import retrofit2.Response
 interface UserRepository {
     suspend fun registration(user: UserReg): Response<User>
     suspend fun login(user: UserAuth): Response<User>
+    suspend fun getUser(userId: Int): User
 
 }

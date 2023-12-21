@@ -5,6 +5,7 @@ import com.example.bookreader.data.remote.responses.Review
 import com.example.bookreader.data.remote.responses.User
 import com.example.bookreader.domain.models.UserAuth
 import com.example.bookreader.domain.models.UserReg
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -38,6 +39,11 @@ interface BooksApi {
         @Body review: Review
     ) : Review
 
+    @POST("review/get/{bookId}")
+    fun getReviewList(
+        @Path("bookId") bookId: Int
+    ) : List<Review>
+
     @GET("desk/user_book")
     suspend fun getUserBooks(): List<Book>
 
@@ -56,4 +62,9 @@ interface BooksApi {
     suspend fun deleteReview(
         @Path("id") id: Int
     )
+
+    @GET("user/{id}")
+    suspend fun getUser(
+        @Path("id") id: Int
+    ) : User
 }

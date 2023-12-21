@@ -18,4 +18,8 @@ class UserRepositoryImpl(
         return api.login(user)
     }
 
+    override suspend fun getUser(userId: Int): User {
+        return api.getUser(userId)
+    }
+
 }
