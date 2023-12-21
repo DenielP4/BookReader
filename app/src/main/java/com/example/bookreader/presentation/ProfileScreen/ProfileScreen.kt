@@ -1,5 +1,6 @@
 package com.example.bookreader.presentation.ProfileScreen
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -62,6 +63,7 @@ fun ProfileScreen(
 
     LaunchedEffect(true) {
         viewModel.onEvent(ProfileEvent.OnLoad)
+        Log.d("Обновил", "ТУТ")
     }
 
     Box(

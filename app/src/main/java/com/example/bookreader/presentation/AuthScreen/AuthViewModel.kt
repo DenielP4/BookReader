@@ -61,9 +61,9 @@ class AuthViewModel @Inject constructor(
                                 userId = response.body()?.id
                             )
                         )
+                        sendUiEvent(UiEvent.Navigate(event.route))
                     }
                 }
-                sendUiEvent(UiEvent.Navigate(event.route))
 
             }
             is AuthEvent.OnNameTextChange -> {
