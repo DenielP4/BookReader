@@ -62,6 +62,8 @@ class SearchBookViewModel @Inject constructor(
         when (event) {
             is SearchBookEvent.OnBookClick -> {
                 sendUiEvent(UiEvent.Navigate(event.route))
+                searchText.value = ""
+                isSearching.value = false
                 Log.d("Route", "${event.route}")
             }
 
