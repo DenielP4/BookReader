@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
@@ -149,18 +150,19 @@ fun BookCardTop(
         }
 
         Text(
+            modifier = Modifier.layoutId("nameBook").padding(end = 220.dp),
             text = book.name,
             color = Color.White,
-            fontSize = 22.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            softWrap = true,
-            modifier = Modifier.layoutId("nameBook")
+            maxLines = 4
         )
         Text(
             text = book.author,
             color = Color.White,
             fontSize = 20.sp,
-            modifier = Modifier.layoutId("nameAuthor")
+            maxLines = 2,
+            modifier = Modifier.layoutId("nameAuthor").padding(end = 220.dp)
         )
         Box(
             modifier = Modifier.layoutId("ratingBook")
