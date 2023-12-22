@@ -170,12 +170,12 @@ fun BottomStatisticUser(
                 colors = ButtonDefaults.buttonColors(BlueDark),
                 shape = RoundedCornerShape(18.dp),
                 contentPadding = PaddingValues(
-                    horizontal = 75.dp,
+                    horizontal = 50.dp,
                     vertical = 15.dp
                 )
             ) {
                 Text(
-                    text = "Авторизуйтесь",
+                    text = "АВТОРИЗОВАТЬСЯ",
                     fontSize = 20.sp,
                     color = Color.White,
                     fontWeight = FontWeight.Bold
