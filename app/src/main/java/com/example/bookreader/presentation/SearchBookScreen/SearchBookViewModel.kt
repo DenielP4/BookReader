@@ -31,6 +31,7 @@ class SearchBookViewModel @Inject constructor(
     var loadError = mutableStateOf("")
     var isLoading = mutableStateOf(false)
     val currentBookList = mutableStateOf<List<BookList>>(listOf())
+
     //Сохраняем полученные книги в кеш
     private var cachedBookList = listOf<BookList>()
 
@@ -75,9 +76,8 @@ class SearchBookViewModel @Inject constructor(
                 isSearching.value = true
                 searchText.value = event.text
                 bookList.value = cachedBookList.filter { book ->
-                    book.name.lowercase()
-                        .startsWith(searchText.value.lowercase()) || book.author.lowercase()
-                        .startsWith(searchText.value.lowercase())
+                    book.name.lowercase().startsWith(searchText.value.lowercase()) ||
+                    book.author.lowercase().startsWith(searchText.value.lowercase())
                 }
                 Log.d("текущий поиск", "${bookList.value}")
             }
@@ -154,20 +154,21 @@ class SearchBookViewModel @Inject constructor(
     }
 
     private fun filterBookList(filterSettings: Filter) {
-        if (filterSettings.bookName == "" && filterSettings.bookAuthor == "" && filterSettings.bookRating?.isEmpty() == true){
+        if (filterSettings.bookName == "" && filterSettings.bookAuthor == "" && filterSettings.bookRating?.isEmpty() == true) {
             Log.d("ПУСТО", "МЫ ТУТ")
             bookList.value = cachedBookList
         } else {
             Log.d("НЕ ПУСТО", "ТУТ")
             bookList.value = cachedBookList
-            if (filterSettings.bookName != ""){
+            if (filterSettings.bookName != "") {
                 bookList.value = bookList.value.filter {
-                    it.name.lowercase() == filterSettings.bookName?.lowercase()
+                    it.name.lowercase().contains(filterSettings.bookName!!.lowercase())
                 }
             }
-            if (filterSettings.bookAuthor != ""){
+            if (filterSettings.bookAuthor != "") {
                 bookList.value = bookList.value.filter {
-                    it.author.lowercase() == filterSettings.bookAuthor?.lowercase()
+//                    it.author.lowercase() == filterSettings.bookAuthor?.lowercase()
+                    it.author.lowercase().contains(filterSettings.bookAuthor!!.lowercase())
                 }
             }
             if (filterSettings.bookRating?.isEmpty() == false) {

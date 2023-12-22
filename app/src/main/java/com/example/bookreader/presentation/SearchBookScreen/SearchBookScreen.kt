@@ -103,13 +103,13 @@ fun SearchBookScreen(
     }
 
     LaunchedEffect(true) {
-        viewModel.onEvent(SearchBookEvent.OnLoadBookList)
+        if (filter == Filter("", "", listOf())) {
+            viewModel.onEvent(SearchBookEvent.OnLoadBookList)
+        }
     }
 
     LaunchedEffect(viewModel.filter) {
-        if (viewModel.filter != null) {
-            viewModel.onEvent(SearchBookEvent.OnChangeFilter(viewModel.filter!!))
-        }
+        viewModel.onEvent(SearchBookEvent.OnChangeFilter(viewModel.filter!!))
     }
 
     Box(
