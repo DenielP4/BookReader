@@ -32,6 +32,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,6 +66,7 @@ data class Menu(
 
 @Composable
 fun UserListBook(
+    partUser: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     onNavigate: (String) -> Unit
 ) {
@@ -102,86 +104,88 @@ fun UserListBook(
     var expanded by remember {
         mutableStateOf(false)
     }
-    ConstraintLayout(
-        constraintSet = constrains,
-        modifier = modifier
-    ) {
-
-        Row(
-            modifier = Modifier.layoutId("sorting"),
-            verticalAlignment = Alignment.CenterVertically
+    if (partUser.value) {
+        ConstraintLayout(
+            constraintSet = constrains,
+            modifier = modifier
         ) {
-            Text(
-                text = "СОРТИРОВКА",
-                color = GrayLight,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-            Spacer(modifier = Modifier.width(5.dp))
+
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.clickable {
-                    expanded = !expanded
-                }
+                modifier = Modifier.layoutId("sorting"),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = selectedText.text,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
+                    text = "СОРТИРОВКА",
+                    color = GrayLight,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold
                 )
-                Icon(
-                    imageVector = Icons.Default.ExpandMore,
-                    contentDescription = "Сортировка",
-                    tint = Color.White
-                )
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                Spacer(modifier = Modifier.width(5.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable {
+                        expanded = !expanded
+                    }
                 ) {
-                    sortList.forEach { item ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(text = item.text)
-                            },
-                            leadingIcon = {
-                                if (item.isChecked)
-                                    Icon(
-                                        imageVector = Icons.Default.Check,
-                                        contentDescription = "Выбрано",
-                                        tint = Color.Black
-                                    )
-                            },
-                            onClick = {
-                                expanded = false
-                                selectedText = item
-                                sortList.indices.forEach { index ->
-                                    sortList[index] = sortList[index].copy(
-                                        isChecked = selectedText.text == sortList[index].text
-                                    )
+                    Text(
+                        text = selectedText.text,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Icon(
+                        imageVector = Icons.Default.ExpandMore,
+                        contentDescription = "Сортировка",
+                        tint = Color.White
+                    )
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        sortList.forEach { item ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = item.text)
+                                },
+                                leadingIcon = {
+                                    if (item.isChecked)
+                                        Icon(
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = "Выбрано",
+                                            tint = Color.Black
+                                        )
+                                },
+                                onClick = {
+                                    expanded = false
+                                    selectedText = item
+                                    sortList.indices.forEach { index ->
+                                        sortList[index] = sortList[index].copy(
+                                            isChecked = selectedText.text == sortList[index].text
+                                        )
+                                    }
                                 }
-                            }
-                        )
-                        if (item != sortList[sortList.size-1]) {
-                            Divider(
-                                color = GrayLight
                             )
+                            if (item != sortList[sortList.size - 1]) {
+                                Divider(
+                                    color = GrayLight
+                                )
+                            }
                         }
                     }
                 }
             }
-        }
-        LazyColumn(
-            modifier = Modifier
-                .layoutId("listOfBooks")
-                .padding(bottom = 50.dp)
-        ) {
-            items(5) {
-                AddedBookCardItem(
-                    modifier = Modifier
-                        .fillMaxHeight(0.2f)
-                        .fillMaxWidth()
-                ) {
-                    onNavigate(it)
+            LazyColumn(
+                modifier = Modifier
+                    .layoutId("listOfBooks")
+                    .padding(bottom = 50.dp)
+            ) {
+                items(5) {
+                    AddedBookCardItem(
+                        modifier = Modifier
+                            .fillMaxHeight(0.2f)
+                            .fillMaxWidth()
+                    ) {
+                        onNavigate(it)
+                    }
                 }
             }
         }
