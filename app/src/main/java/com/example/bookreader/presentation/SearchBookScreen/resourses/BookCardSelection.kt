@@ -233,7 +233,8 @@ fun BookCardItem(
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.layoutId("nameBook")
+                    maxLines = 3,
+                    modifier = Modifier.layoutId("nameBook").padding(end = 150.dp)
                 )
                 Text(
                     text = book.author,
