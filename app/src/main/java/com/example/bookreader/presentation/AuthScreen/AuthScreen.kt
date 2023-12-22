@@ -67,8 +67,8 @@ import com.example.bookreader.presentation.utils.UiEvent
 fun AuthScreen(
     navController: NavController,
     viewModel: AuthViewModel = hiltViewModel(),
-    onNavigate: (String) -> Unit
-
+    onNavigate: (String) -> Unit,
+    onPopBackStack: () -> Unit
 ) {
 
     val scaffoldState = rememberScaffoldState()
@@ -80,6 +80,10 @@ fun AuthScreen(
                     scaffoldState.snackbarHostState.showSnackbar(
                         uiEvent.message
                     )
+                }
+
+                is UiEvent.PopBackStack -> {
+                    onPopBackStack()
                 }
 
                 is UiEvent.Navigate -> {

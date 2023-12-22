@@ -61,7 +61,8 @@ class AuthViewModel @Inject constructor(
                                 userId = response.body()?.id
                             )
                         )
-                        sendUiEvent(UiEvent.Navigate(event.route))
+                        sendUiEvent(UiEvent.PopBackStack)
+//                        sendUiEvent(UiEvent.Navigate(event.route))
                     }
                 }
 
