@@ -15,6 +15,7 @@ import com.example.bookreader.data.remote.responses.Review
 import com.example.bookreader.domain.models.BookInfo
 import com.example.bookreader.domain.models.BookList
 import com.example.bookreader.domain.repository.BookRepository
+import com.example.bookreader.domain.repository.DeskOfBookRepository
 import com.example.bookreader.domain.repository.UserInfoRepository
 import com.example.bookreader.domain.repository.UserRepository
 import com.example.bookreader.presentation.AddReviewScreen.AddReviewEvent
@@ -32,6 +33,7 @@ class BookInfoViewModel @Inject constructor(
     private val repository: BookRepository,
     private val repositoryUser: UserInfoRepository,
     private val repositoryUserServer: UserRepository,
+    private val repositoryDesk: DeskOfBookRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), DialogController {
 
@@ -84,6 +86,18 @@ class BookInfoViewModel @Inject constructor(
                 }
             }
 
+            BookInfoEvent.OnClickAddBook -> {
+                if (user == null) {
+                    openDialog.value = true
+                } else {
+//                    viewModelScope.launch {
+//                        repositoryDesk.addBookToDesk(
+//                            id = user?.userId!!,
+//                            book =
+//                        )
+//                    }
+                }
+            }
         }
     }
 

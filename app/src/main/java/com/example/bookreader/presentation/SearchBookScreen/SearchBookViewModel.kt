@@ -66,6 +66,7 @@ class SearchBookViewModel @Inject constructor(
                 searchText.value = ""
                 isSearching.value = false
                 Log.d("Route", "${event.route}")
+                filterClickCheck.value = ""
             }
 
             is SearchBookEvent.OnShowFilterScreen -> {
@@ -123,6 +124,7 @@ class SearchBookViewModel @Inject constructor(
             }
 
             SearchBookEvent.OnLoadBookList -> {
+                Log.d("Список пришел еще", "ДА")
                 loadBookList()
             }
         }
@@ -225,6 +227,41 @@ class SearchBookViewModel @Inject constructor(
     }
 
     var filterList = mutableStateListOf(
+        FilterGenre(
+            "ПЬЕСА",
+            false
+        ),
+        FilterGenre(
+            "МИСТИКА",
+            false
+        ),
+        FilterGenre(
+            "ПРИКЛЮЧЕНИЯ",
+            false
+        ),
+        FilterGenre(
+            "СКАЗКА",
+            false
+        ),
+        FilterGenre(
+            "РОМАН",
+            false
+        ),
+        FilterGenre(
+            "КЛАССИКА",
+            false
+        ),
+        FilterGenre(
+            "ПОВЕСТЬ",
+            false
+        ),
+        FilterGenre(
+            "ДРАМА",
+            false
+        ),
+    )
+
+    var filterListSave = mutableStateListOf(
         FilterGenre(
             "ПЬЕСА",
             false

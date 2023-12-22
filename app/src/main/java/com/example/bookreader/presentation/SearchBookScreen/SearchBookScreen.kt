@@ -103,7 +103,8 @@ fun SearchBookScreen(
     }
 
     LaunchedEffect(true) {
-        if (filter == Filter("", "", listOf())) {
+        if (filter == Filter("", "", listOf()) || filter == null) {
+            Log.d("ЛАУНЧ БЛЯТЬ", "ТУТУТУТУТУТУТУТУТУТУТУТУТТУ")
             viewModel.onEvent(SearchBookEvent.OnLoadBookList)
         }
     }

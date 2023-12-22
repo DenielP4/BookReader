@@ -6,4 +6,5 @@ sealed class BookInfoEvent {
     object OnLoad: BookInfoEvent()
     object OnLoadBook: BookInfoEvent()
     data class OnClickAddReview(val route: String): BookInfoEvent()
+    object OnClickAddBook: BookInfoEvent()
 }

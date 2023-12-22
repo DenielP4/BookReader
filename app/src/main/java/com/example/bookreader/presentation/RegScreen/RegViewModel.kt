@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.bookreader.data.remote.responses.DeskOfBook
 import com.example.bookreader.data.remote.responses.User
 import com.example.bookreader.domain.models.UserReg
 import com.example.bookreader.domain.repository.UserRepository
@@ -48,7 +49,8 @@ class RegViewModel @Inject constructor(
                         UserReg(
                             name = userNameText.value,
                             registerDate = getCurrentTime(),
-                            password = userPasswordText.value
+                            password = userPasswordText.value,
+                            shelf = listOf()
                         )
                     )
                     if (response.code() == 409){

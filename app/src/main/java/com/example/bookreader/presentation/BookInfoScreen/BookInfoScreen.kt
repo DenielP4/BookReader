@@ -86,7 +86,7 @@ fun BookInfoScreen(
                 .fillMaxSize()
                 .background(Color.Black)
         ) {
-            if (viewModel.isLoading.value) {
+            if (viewModel.book == null) {
                 CircularProgressIndicator(
                     color = MaterialTheme.colors.primary,
                     modifier = Modifier
