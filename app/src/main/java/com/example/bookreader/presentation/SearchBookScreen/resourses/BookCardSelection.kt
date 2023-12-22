@@ -86,6 +86,7 @@ fun BookCardSelection(
         }
         items(viewModel.bookList.value) { book ->
             BookCardItem(
+                viewModel = viewModel,
                 book = book,
                 modifier = Modifier
                     .fillMaxHeight(0.2f)
@@ -103,12 +104,13 @@ fun BookCardSelection(
 @ExperimentalMaterialApi
 @Composable
 fun BookCardItem(
+    viewModel: SearchBookViewModel,
     book: BookList,
     modifier: Modifier = Modifier,
     onEvent: (SearchBookEvent) -> Unit
 ) {
 
-    var look = 20 // количество просмотров
+    var look = (100..200).random() // количество просмотров
     val squareSize = 100.dp
     val swipeAbleState = rememberSwipeableState(initialValue = 0)
     val sizePx = with(LocalDensity.current) { squareSize.toPx() }
@@ -173,7 +175,9 @@ fun BookCardItem(
             verticalArrangement = Arrangement.Center
         ) {
             IconButton(
-                onClick = { TODO() },
+                onClick = {
+                    viewModel.onEvent(SearchBookEvent.OnClickAddBook(book.id))
+                },
                 modifier = Modifier
                     .size(50.dp)
                     .clip(CircleShape)

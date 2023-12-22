@@ -4,8 +4,11 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -15,8 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -25,6 +30,9 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
+import coil.request.ImageRequest
 import com.example.bookreader.R
 import com.example.bookreader.presentation.UserBookScreen.UserBookEvent
 import com.example.bookreader.presentation.UserBookScreen.UserBookViewModel
@@ -112,25 +120,38 @@ fun ActuallyBookCardTop(
                 shape = RoundedCornerShape(10.dp),
                 border = BorderStroke(3.dp, color = BlueDark)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.hp),
-                    contentDescription = "Картинка",
-                    contentScale = ContentScale.FillWidth
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(viewModel.topBook?.image)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = viewModel.topBook?.name,
+                    loading = {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colors.primary, modifier = Modifier.scale(0.5F)
+                        )
+                    },
+                    success = { success ->
+                        SubcomposeAsyncImageContent()
+                    },
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(5.dp)).size(width = 200.dp, height = 285.dp),
+                    contentScale = ContentScale.Crop
                 )
             }
             Text(
-                text = "Название книги",
+                text = viewModel.topBook?.name!!,
                 color = Color.White,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 softWrap = true,
-                modifier = Modifier.layoutId("nameBook")
+                modifier = Modifier.layoutId("nameBook").padding(end = 220.dp)
             )
             Text(
-                text = "Автор книги",
+                text = viewModel.topBook?.author!!,
                 color = Color.White,
                 fontSize = 20.sp,
-                modifier = Modifier.layoutId("nameAuthor")
+                modifier = Modifier.layoutId("nameAuthor").padding(end = 225.dp)
             )
             Text(
                 text = "89%",

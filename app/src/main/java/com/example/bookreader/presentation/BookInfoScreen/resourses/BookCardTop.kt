@@ -45,6 +45,7 @@ import coil.request.ImageRequest
 import com.example.bookreader.R
 import com.example.bookreader.data.remote.responses.Book
 import com.example.bookreader.domain.models.BookInfo
+import com.example.bookreader.presentation.BookInfoScreen.BookInfoEvent
 import com.example.bookreader.presentation.BookInfoScreen.BookInfoViewModel
 import com.example.bookreader.presentation.ui.theme.BlueDark
 import com.example.bookreader.presentation.ui.theme.BlueLight
@@ -52,6 +53,7 @@ import com.example.bookreader.presentation.ui.theme.Orange
 
 @Composable
 fun BookCardTop(
+    viewModel: BookInfoViewModel,
     book: BookInfo,
     navController: NavController,
     modifier: Modifier = Modifier
@@ -198,7 +200,9 @@ fun BookCardTop(
         }
         Button(
             modifier = Modifier.layoutId("addButton"),
-            onClick = { /*TODO*/ },
+            onClick = {
+                      viewModel.onEvent(BookInfoEvent.OnClickAddBook)
+            },
             colors = ButtonDefaults.buttonColors(BlueDark),
             shape = RoundedCornerShape(18.dp),
             contentPadding = PaddingValues(

@@ -1,5 +1,6 @@
 package com.example.bookreader.presentation.SearchBookScreen
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -20,10 +21,14 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -74,12 +79,15 @@ import com.example.bookreader.presentation.ui.theme.Orange
 import com.example.bookreader.presentation.ui.theme.TextLight
 import com.example.bookreader.presentation.utils.UiEvent
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun SearchBookScreen(
     filter: Filter?,
     viewModel: SearchBookViewModel = hiltViewModel(),
     onNavigate: (String) -> Unit
 ) {
+
+    val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { uiEvent ->
@@ -89,6 +97,11 @@ fun SearchBookScreen(
                     onNavigate(uiEvent.route)
                 }
 
+                is UiEvent.ShowSnackBar -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        uiEvent.message
+                    )
+                }
                 else -> {}
             }
         }
@@ -113,33 +126,47 @@ fun SearchBookScreen(
         viewModel.onEvent(SearchBookEvent.OnChangeFilter(viewModel.filter!!))
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-    ) {
-        Column {
-            SearchCard(
-                viewModel = viewModel,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.16f)
-                    .background(BlueLight)
-            ){
-                onNavigate(it)
+    Scaffold(
+        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = scaffoldState.snackbarHostState) { data ->
+                Snackbar(
+                    snackbarData = data,
+                    backgroundColor = BlueDark,
+                    modifier = Modifier.padding(bottom = 80.dp),
+                    contentColor = Color.White
+                )
             }
-            BookCardSelection(
-                viewModel = viewModel,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-                    .padding(
-                        start = 10.dp,
-                        end = 10.dp,
-                        bottom = 5.dp
-                    )
-            ){
-                onNavigate(it)
+        }
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+        ) {
+            Column {
+                SearchCard(
+                    viewModel = viewModel,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.16f)
+                        .background(BlueLight)
+                ) {
+                    onNavigate(it)
+                }
+                BookCardSelection(
+                    viewModel = viewModel,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .padding(
+                            start = 10.dp,
+                            end = 10.dp,
+                            bottom = 5.dp
+                        )
+                ) {
+                    onNavigate(it)
+                }
             }
         }
     }

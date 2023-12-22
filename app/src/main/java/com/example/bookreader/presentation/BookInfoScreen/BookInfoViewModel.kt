@@ -49,9 +49,7 @@ class BookInfoViewModel @Inject constructor(
 
     var reviewList = mutableStateOf<List<Review>>(listOf())
 
-    var userName = mutableStateOf("")
-
-    override var dialogTitle = mutableStateOf("Уважаемый пользователь! Чтобы оставить отзыв на книгу, нужно авторизоваться в нашем приложении.")
+    override var dialogTitle = mutableStateOf("")
         private set
     override var openDialog = mutableStateOf(false)
         private set
@@ -80,6 +78,7 @@ class BookInfoViewModel @Inject constructor(
 
             is BookInfoEvent.OnClickAddReview -> {
                 if (user == null) {
+                    dialogTitle.value = "Уважаемый пользователь! Чтобы оставить отзыв на книгу, нужно авторизоваться в Нашем приложении."
                     openDialog.value = true
                 } else {
                     sendUiEvent(UiEvent.Navigate(event.route))
@@ -88,14 +87,16 @@ class BookInfoViewModel @Inject constructor(
 
             BookInfoEvent.OnClickAddBook -> {
                 if (user == null) {
+                    dialogTitle.value = "Уважаемый пользователь! Чтобы добавить книгу, нужно авторизоваться в Нашем приложении."
                     openDialog.value = true
                 } else {
-//                    viewModelScope.launch {
-//                        repositoryDesk.addBookToDesk(
-//                            id = user?.userId!!,
-//                            book =
-//                        )
-//                    }
+                    viewModelScope.launch {
+                        repositoryDesk.addBookToDeskById(
+                            userId = user?.userId!!,
+                            bookId = bookId
+                        )
+                        sendUiEvent(UiEvent.ShowSnackBar("Книга ${book?.name} была добавлена на Вашу полку."))
+                    }
                 }
             }
         }

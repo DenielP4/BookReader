@@ -11,6 +11,7 @@ import com.example.bookreader.common.Resource
 import com.example.bookreader.data.locale.UserInfo
 import com.example.bookreader.domain.models.BookList
 import com.example.bookreader.domain.repository.BookRepository
+import com.example.bookreader.domain.repository.DeskOfBookRepository
 import com.example.bookreader.domain.repository.UserInfoRepository
 import com.example.bookreader.presentation.FilterScreen.Filter
 import com.example.bookreader.presentation.utils.UiEvent
@@ -24,6 +25,7 @@ import javax.inject.Inject
 class SearchBookViewModel @Inject constructor(
     private val repository: BookRepository,
     private val repositoryUser: UserInfoRepository,
+    private val repositoryDesk: DeskOfBookRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     //Получение книг с сервера
@@ -127,6 +129,19 @@ class SearchBookViewModel @Inject constructor(
                 Log.d("Список пришел еще", "ДА")
                 loadBookList()
             }
+
+            is SearchBookEvent.OnClickAddBook -> {
+            if (user == null) {
+                sendUiEvent(UiEvent.ShowSnackBar("Для начала войдите в аккаунт!"))
+            } else {
+                viewModelScope.launch {
+                    repositoryDesk.addBookToDeskById(
+                        userId = user?.userId!!,
+                        bookId = event.bookId
+                    )
+                }
+            }
+        }
         }
     }
 

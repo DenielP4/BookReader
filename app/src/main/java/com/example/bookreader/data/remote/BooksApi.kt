@@ -47,10 +47,10 @@ interface BooksApi {
     @GET("desk/user_book")
     suspend fun getUserBooks(): List<Book>
 
-    @POST("desk/addBook/{id}")
-    suspend fun addBookToDesk(
-        @Path("id") deskId: Int,
-        @Body book: Book
+    @POST("user/{userId}/book/{bookId}")
+    suspend fun addBookToDeskById(
+        @Path("userId") userId: Int,
+        @Path("bookId") bookId: Int
     )
 
     @DELETE("desk/{id}")

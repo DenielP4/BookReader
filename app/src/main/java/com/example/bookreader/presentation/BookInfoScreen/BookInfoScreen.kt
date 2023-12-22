@@ -101,6 +101,7 @@ fun BookInfoScreen(
             } else {
                 Column {
                     BookCardTop(
+                        viewModel = viewModel,
                         book = viewModel.book!!,
                         navController,
                         modifier = Modifier

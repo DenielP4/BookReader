@@ -1,5 +1,6 @@
 package com.example.bookreader.presentation.UserBookScreen.resourses
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,11 +15,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
@@ -40,8 +44,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,7 +58,14 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
 import androidx.navigation.NavController
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
+import coil.request.ImageRequest
 import com.example.bookreader.R
+import com.example.bookreader.data.remote.responses.Book
+import com.example.bookreader.domain.models.UserBook
+import com.example.bookreader.presentation.UserBookScreen.UserBookEvent
+import com.example.bookreader.presentation.UserBookScreen.UserBookViewModel
 import com.example.bookreader.presentation.ui.theme.BlackLight
 import com.example.bookreader.presentation.ui.theme.BlueDark
 import com.example.bookreader.presentation.ui.theme.GrayLight
@@ -66,6 +79,7 @@ data class Menu(
 
 @Composable
 fun UserListBook(
+    viewModel: UserBookViewModel,
     partUser: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     onNavigate: (String) -> Unit
@@ -84,23 +98,6 @@ fun UserListBook(
         }
     }
 
-    val sortList = arrayOf(
-        Menu(
-            text = "ПО АЛФАВИТУ",
-            isChecked = true
-        ),
-        Menu(
-            text = "ПО АВТОРУ",
-            isChecked = false
-        ),
-        Menu(
-            text = "ПО ПРОГРЕССУ",
-            isChecked = false
-        )
-    )
-    var selectedText by remember {
-        mutableStateOf(sortList[0])
-    }
     var expanded by remember {
         mutableStateOf(false)
     }
@@ -128,7 +125,7 @@ fun UserListBook(
                     }
                 ) {
                     Text(
-                        text = selectedText.text,
+                        text = viewModel.selectedText.text,
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                     )
@@ -141,7 +138,7 @@ fun UserListBook(
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
                     ) {
-                        sortList.forEach { item ->
+                        viewModel.sortList.forEach { item ->
                             DropdownMenuItem(
                                 text = {
                                     Text(text = item.text)
@@ -156,15 +153,10 @@ fun UserListBook(
                                 },
                                 onClick = {
                                     expanded = false
-                                    selectedText = item
-                                    sortList.indices.forEach { index ->
-                                        sortList[index] = sortList[index].copy(
-                                            isChecked = selectedText.text == sortList[index].text
-                                        )
-                                    }
+                                    viewModel.onEvent(UserBookEvent.OnChangeSort(item))
                                 }
                             )
-                            if (item != sortList[sortList.size - 1]) {
+                            if (item != viewModel.sortList[viewModel.sortList.size - 1]) {
                                 Divider(
                                     color = GrayLight
                                 )
@@ -173,18 +165,33 @@ fun UserListBook(
                     }
                 }
             }
-            LazyColumn(
-                modifier = Modifier
-                    .layoutId("listOfBooks")
-                    .padding(bottom = 50.dp)
-            ) {
-                items(5) {
-                    AddedBookCardItem(
-                        modifier = Modifier
-                            .fillMaxHeight(0.2f)
-                            .fillMaxWidth()
-                    ) {
-                        onNavigate(it)
+            if (viewModel.loadUserBook.value) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colors.primary,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .padding(
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = 16.dp
+                        )
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .layoutId("listOfBooks")
+                        .padding(bottom = 50.dp)
+                ) {
+                    items(viewModel.books.value) { book ->
+                        AddedBookCardItem(
+                            viewModel = viewModel,
+                            book = book,
+                            modifier = Modifier
+                                .fillMaxHeight(0.2f)
+                                .fillMaxWidth()
+                        ) {
+                            onNavigate(it)
+                        }
                     }
                 }
             }
@@ -195,6 +202,8 @@ fun UserListBook(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AddedBookCardItem(
+    viewModel: UserBookViewModel,
+    book: UserBook,
     modifier: Modifier = Modifier,
     onNavigate: (String) -> Unit
 ) {
@@ -243,7 +252,10 @@ fun AddedBookCardItem(
             .clip(RoundedCornerShape(15.dp))
             .background(BlackLight)
             .clickable {
-                onNavigate(Application.PICK_BOOK)
+                viewModel.onEvent(UserBookEvent.OnClickBook(
+                    Application.PICK_BOOK + "/${book.bookId}"
+                ))
+                Log.d("UserList", "ТУТ")
             }
             .swipeable(
                 state = swipeAbleState,
@@ -297,24 +309,35 @@ fun AddedBookCardItem(
                         .clip(RoundedCornerShape(5.dp))
                         .layoutId("imageBook")
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.hp),
-                        contentDescription = "Картинка",
+                    SubcomposeAsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(book.image)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = book.name,
+                        loading = {
+                            CircularProgressIndicator(
+                                color = MaterialTheme.colors.primary, modifier = Modifier.scale(0.5F)
+                            )
+                        },
+                        success = { success ->
+                            SubcomposeAsyncImageContent()
+                        },
                         modifier = Modifier
-                            .clip(RoundedCornerShape(5.dp)),
-                        contentScale = ContentScale.FillWidth
+                            .clip(RoundedCornerShape(5.dp)).size(width = 150.dp, height = 221.dp),
+                        contentScale = ContentScale.Crop
                     )
                 }
 
                 Text(
-                    text = "Название книги",
+                    text = book.name,
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.layoutId("nameBook")
                 )
                 Text(
-                    text = "Автор книги",
+                    text = book.author,
                     color = Color.White,
                     fontSize = 16.sp,
                     modifier = Modifier.layoutId("nameAuthor")

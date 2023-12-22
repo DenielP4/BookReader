@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieClipSpec
@@ -50,7 +51,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun PickBookScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: PickViewModel = hiltViewModel()
 ) {
     Box(
         modifier = Modifier
@@ -66,6 +68,7 @@ fun PickBookScreen(
 
             )
             MainBook(
+                viewModel = viewModel,
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
@@ -77,13 +80,10 @@ fun PickBookScreen(
 
 @Composable
 fun MainBook(
+    viewModel: PickViewModel,
     modifier: Modifier = Modifier
 ) {
-    val bookUrl = "https://www.100bestbooks.ru/files/Bulgakov_Master_i_Margarita.pdf"
-    val pdfState = rememberVerticalPdfReaderState(
-        resource = ResourceType.Remote(bookUrl),
-        isZoomEnable = true
-    )
+
     var isLoading by remember { mutableStateOf(true) }
 
     AnimatedVisibility(visible = isLoading) {
@@ -106,12 +106,20 @@ fun MainBook(
         delay(7000)
         isLoading = false
     }
-    VerticalPDFReader(
-        state = pdfState,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.Gray)
-    )
+    if (!viewModel.isLoading.value) {
+        val bookUrl = viewModel.url.value
+        Log.d("Финальная ссылка", "$bookUrl")
+        val pdfState = rememberVerticalPdfReaderState(
+            resource = ResourceType.Remote(bookUrl),
+            isZoomEnable = true
+        )
+        VerticalPDFReader(
+            state = pdfState,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color.Gray)
+        )
+    }
 }
 @Composable
 fun TopBook(

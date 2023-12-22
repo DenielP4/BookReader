@@ -1,5 +1,6 @@
 package com.example.bookreader.presentation.UserBookScreen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +34,7 @@ fun UserBookScreen(
         viewModel.uiEvent.collect { uiEvent ->
             when (uiEvent) {
                 is UiEvent.Navigate -> {
+                    Log.d("Навигация из книги в пик", "${uiEvent.route}")
                     onNavigate(uiEvent.route)
                 }
 
@@ -60,13 +62,6 @@ fun UserBookScreen(
             .background(Color.Black)
     ) {
         Column {
-            ActuallyBookCardTop(
-                viewModel = viewModel,
-                partUser = partUser,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.45f)
-            )
             if (viewModel.isLoading.value) {
                 CircularProgressIndicator(
                     color = MaterialTheme.colors.primary,
@@ -79,7 +74,15 @@ fun UserBookScreen(
                         )
                 )
             } else {
+                ActuallyBookCardTop(
+                    viewModel = viewModel,
+                    partUser = partUser,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.45f)
+                )
                 UserListBook(
+                    viewModel = viewModel,
                     partUser = partUser,
                     modifier = Modifier
                         .fillMaxWidth()

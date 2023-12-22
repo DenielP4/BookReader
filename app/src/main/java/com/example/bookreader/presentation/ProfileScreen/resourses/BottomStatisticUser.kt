@@ -13,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -32,10 +33,12 @@ import com.example.bookreader.presentation.ProfileScreen.ProfileEvent
 import com.example.bookreader.presentation.ProfileScreen.ProfileViewModel
 import com.example.bookreader.presentation.ui.theme.BlueDark
 import com.example.bookreader.presentation.utils.Application
+import kotlinx.coroutines.delay
 
 
 @Composable
 fun BottomStatisticUser(
+    partProfile: MutableState<Boolean>,
     viewModel: ProfileViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -81,13 +84,9 @@ fun BottomStatisticUser(
         }
     }
 
-    val partProfile = remember {
-        mutableStateOf(false)
-    }
 
-    LaunchedEffect(viewModel.user) {
-        partProfile.value = viewModel.user != null
-    }
+
+
 
     ConstraintLayout(
         constraintSet = constrains,

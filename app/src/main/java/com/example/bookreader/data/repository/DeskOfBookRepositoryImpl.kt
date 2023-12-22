@@ -17,8 +17,8 @@ class DeskOfBookRepositoryImpl(
         return Resource.Success(response)
     }
 
-    override suspend fun addBookToDesk(id: Int, book: Book) {
-        api.addBookToDesk(id, book)
+    override suspend fun addBookToDeskById(userId: Int, bookId: Int) {
+        api.addBookToDeskById(userId, bookId)
     }
 
     override suspend fun deleteBookFromDesk(id: Int) {

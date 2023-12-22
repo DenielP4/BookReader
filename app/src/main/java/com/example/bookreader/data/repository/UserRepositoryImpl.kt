@@ -1,5 +1,6 @@
 package com.example.bookreader.data.repository
 
+import com.example.bookreader.common.Resource
 import com.example.bookreader.data.remote.BooksApi
 import com.example.bookreader.data.remote.responses.User
 import com.example.bookreader.domain.models.UserAuth
@@ -18,8 +19,13 @@ class UserRepositoryImpl(
         return api.login(user)
     }
 
-    override suspend fun getUser(userId: Int): User {
-        return api.getUser(userId)
+    override suspend fun getUser(userId: Int): Resource<User> {
+        val response = try {
+            api.getUser(userId)
+        } catch (e: Exception) {
+            return Resource.Error("Неизвестная ошибка подключения к локальной базе данных.")
+        }
+        return Resource.Success(response)
     }
 
 }

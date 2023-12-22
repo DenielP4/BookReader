@@ -1,5 +1,6 @@
 package com.example.bookreader.presentation.SearchBookScreen
 
+import com.example.bookreader.presentation.BookInfoScreen.BookInfoEvent
 import com.example.bookreader.presentation.FilterScreen.Filter
 import com.example.bookreader.presentation.ProfileScreen.ProfileEvent
 
@@ -12,4 +13,5 @@ sealed class SearchBookEvent {
     data class OnChangeFilter(val filter: Filter): SearchBookEvent()
     object OnLoad: SearchBookEvent()
     object OnLoadBookList: SearchBookEvent()
+    data class OnClickAddBook(val bookId: Int): SearchBookEvent()
 }

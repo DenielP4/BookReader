@@ -50,7 +50,7 @@ fun AppNavigationGraph(
             route = Application.USER_BOOK,
             exitTransition = {
                 when (targetState.destination.route) {
-                    Application.PICK_BOOK -> {
+                    Application.PICK_BOOK + "/{bookId}" -> {
                         slideOutHorizontally(
                             targetOffsetX = { -(it / 2) },
                             animationSpec = tween(
@@ -75,7 +75,7 @@ fun AppNavigationGraph(
             },
             popEnterTransition = {
                 when (initialState.destination.route) {
-                    Application.PICK_BOOK ->
+                    Application.PICK_BOOK + "/{bookId}" ->
                         slideInHorizontally(
                             initialOffsetX = { -(it / 2) },
                             animationSpec = tween(
@@ -98,6 +98,7 @@ fun AppNavigationGraph(
             },
         ) {
             UserBookScreen() { route ->
+                Log.d("Навигация", "${route}")
                 navController.navigate(route)
             }
         }
@@ -195,11 +196,12 @@ fun AppNavigationGraph(
                 navController.currentBackStackEntry
                     ?.savedStateHandle
                     ?.set("filter", filter)
+                Log.d("Навигация", "${route}")
                 navController.navigate(route)
             }
         }
         composable(
-            route = Application.PICK_BOOK,
+            route = Application.PICK_BOOK + "/{bookId}",
             enterTransition = {
                 when (initialState.destination.route) {
                     Application.USER_BOOK ->

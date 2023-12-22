@@ -7,6 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface DeskOfBookRepository {
     suspend fun getUserBooks(): Resource<List<Book>>
-    suspend fun addBookToDesk(id: Int, book: Book)
+    suspend fun addBookToDeskById(userId: Int, bookId: Int)
     suspend fun deleteBookFromDesk(id: Int)
 }
