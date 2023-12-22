@@ -11,4 +11,5 @@ sealed class SearchBookEvent {
     data class OnFilterGenre(val filter: String): SearchBookEvent()
     data class OnChangeFilter(val filter: Filter): SearchBookEvent()
     object OnLoad: SearchBookEvent()
+    object OnLoadBookList: SearchBookEvent()
 }

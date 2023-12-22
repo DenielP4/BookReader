@@ -30,7 +30,7 @@ class SearchBookViewModel @Inject constructor(
     val bookList = mutableStateOf<List<BookList>>(listOf())
     var loadError = mutableStateOf("")
     var isLoading = mutableStateOf(false)
-
+    val currentBookList = mutableStateOf<List<BookList>>(listOf())
     //Сохраняем полученные книги в кеш
     private var cachedBookList = listOf<BookList>()
 
@@ -121,6 +121,10 @@ class SearchBookViewModel @Inject constructor(
             SearchBookEvent.OnLoad -> {
                 loadUser()
             }
+
+            SearchBookEvent.OnLoadBookList -> {
+                loadBookList()
+            }
         }
     }
 
@@ -195,7 +199,7 @@ class SearchBookViewModel @Inject constructor(
                     }
                     loadError.value = ""
                     isLoading.value = false
-                    bookList.value += bookEntries
+                    currentBookList.value += bookEntries
                 }
 
                 is Resource.Error -> {
@@ -205,6 +209,8 @@ class SearchBookViewModel @Inject constructor(
 
                 else -> {}
             }
+            bookList.value = currentBookList.value
+            currentBookList.value = listOf()
             cachedBookList = bookList.value
             Log.d("КЕШ", "$cachedBookList")
         }

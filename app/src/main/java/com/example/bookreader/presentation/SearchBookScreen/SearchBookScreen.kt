@@ -102,6 +102,10 @@ fun SearchBookScreen(
         viewModel.onEvent(SearchBookEvent.OnLoad)
     }
 
+    LaunchedEffect(true) {
+        viewModel.onEvent(SearchBookEvent.OnLoadBookList)
+    }
+
     LaunchedEffect(viewModel.filter) {
         if (viewModel.filter != null) {
             viewModel.onEvent(SearchBookEvent.OnChangeFilter(viewModel.filter!!))
