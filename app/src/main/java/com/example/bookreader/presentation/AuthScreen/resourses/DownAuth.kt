@@ -214,7 +214,7 @@ fun DownAuth(
         Button(
             modifier = Modifier.layoutId("enter"),
             onClick = {
-                viewModel.onEvent(AuthEvent.OnUserLogin(Application.PROFILE))
+                viewModel.onEvent(AuthEvent.OnUserLogin)
             },
             colors = ButtonDefaults.buttonColors(BlueDark),
             shape = RoundedCornerShape(18.dp),
