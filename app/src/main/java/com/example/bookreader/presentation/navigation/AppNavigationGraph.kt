@@ -60,6 +60,16 @@ fun AppNavigationGraph(
                         ).apply { Log.d("USER_BOOK", "exit") }
                     }
 
+                    Application.AUTHORIZATION -> {
+                        slideOutVertically(
+                            targetOffsetY = { it / it },
+                            animationSpec = tween(
+                                durationMillis = time,
+                                easing = FastOutSlowInEasing
+                            )
+                        ).apply { Log.d("PROFILE", "exit") }
+                    }
+
                     else -> null
                 }
             },
@@ -73,6 +83,15 @@ fun AppNavigationGraph(
                                 easing = FastOutSlowInEasing
                             )
                         ).apply { Log.d("USER_BOOK", "popEnter") }
+
+                    Application.AUTHORIZATION ->
+                        slideInVertically(
+                            initialOffsetY = { 0 },
+                            animationSpec = tween(
+                                durationMillis = time,
+                                easing = FastOutSlowInEasing
+                            )
+                        ).apply { Log.d("PROFILE", "popEnter") }
 
                     else -> null
                 }
@@ -272,7 +291,7 @@ fun AppNavigationGraph(
             },
             exitTransition = {
                 when (targetState.destination.route) {
-                    Application.REVIEW -> {
+                    Application.REVIEW + "/{bookId}" -> {
                         slideOutHorizontally(
                             targetOffsetX = { -(it / 2) },
                             animationSpec = tween(
@@ -282,12 +301,22 @@ fun AppNavigationGraph(
                         ).apply { Log.d("BookInfo", "exit") }
                     }
 
+                    Application.AUTHORIZATION -> {
+                        slideOutVertically(
+                            targetOffsetY = { it / it },
+                            animationSpec = tween(
+                                durationMillis = time,
+                                easing = FastOutSlowInEasing
+                            )
+                        ).apply { Log.d("PROFILE", "exit") }
+                    }
+
                     else -> null
                 }
             },
             popEnterTransition = {
                 when (initialState.destination.route) {
-                    Application.REVIEW ->
+                    Application.REVIEW + "/{bookId}" ->
                         slideInHorizontally(
                             initialOffsetX = { -(it / 2) },
                             animationSpec = tween(
@@ -295,6 +324,15 @@ fun AppNavigationGraph(
                                 easing = FastOutSlowInEasing
                             )
                         ).apply { Log.d("BookInfo", "popEnter") }
+
+                    Application.AUTHORIZATION ->
+                        slideInVertically(
+                            initialOffsetY = { 0 },
+                            animationSpec = tween(
+                                durationMillis = time,
+                                easing = FastOutSlowInEasing
+                            )
+                        ).apply { Log.d("PROFILE", "popEnter") }
 
                     else -> null
                 }
@@ -314,15 +352,16 @@ fun AppNavigationGraph(
                 }
             }
         ) {
-            BookInfoScreen(navController) { route ->
-                navController.navigate(route)
-            }
+            BookInfoScreen(
+                navController = navController,
+                onNavigate = { route -> navController.navigate(route) }
+            )
         }
         composable(
-            route = Application.REVIEW,
+            route = Application.REVIEW  + "/{bookId}",
             enterTransition = {
                 when (initialState.destination.route) {
-                    Application.BOOK_INFO + "/{bookId}"->
+                    Application.BOOK_INFO + "/{bookId}" ->
                         slideInHorizontally(
                             initialOffsetX = { it },
                             animationSpec = tween(
@@ -349,13 +388,33 @@ fun AppNavigationGraph(
                 }
             }
         ) {
-            AddReviewScreen(navController = navController)
+            AddReviewScreen(navController = navController) {
+                navController.popBackStack()
+            }
         }
         composable(
             route = Application.AUTHORIZATION,
             enterTransition = {
                 when (initialState.destination.route) {
                     Application.PROFILE ->
+                        slideInVertically(
+                            initialOffsetY = { -it },
+                            animationSpec = tween(
+                                durationMillis = time,
+                                easing = FastOutSlowInEasing
+                            )
+                        ).apply { Log.d("AUTHORIZATION", "enter") }
+
+                    Application.BOOK_INFO + "/{bookId}" ->
+                        slideInVertically(
+                            initialOffsetY = { -it },
+                            animationSpec = tween(
+                                durationMillis = time,
+                                easing = FastOutSlowInEasing
+                            )
+                        ).apply { Log.d("AUTHORIZATION", "enter") }
+
+                    Application.USER_BOOK ->
                         slideInVertically(
                             initialOffsetY = { -it },
                             animationSpec = tween(
@@ -407,6 +466,24 @@ fun AppNavigationGraph(
                             )
                         ).apply { Log.d("AUTHORIZATION", "popExit") }
 
+                    Application.BOOK_INFO + "/{bookId}" ->
+                        slideOutVertically(
+                            targetOffsetY = { -it },
+                            animationSpec = tween(
+                                durationMillis = time,
+                                easing = FastOutSlowInEasing
+                            )
+                        ).apply { Log.d("AUTHORIZATION", "popExit") }
+
+                    Application.USER_BOOK ->
+                        slideOutVertically(
+                            targetOffsetY = { -it },
+                            animationSpec = tween(
+                                durationMillis = time,
+                                easing = FastOutSlowInEasing
+                            )
+                        ).apply { Log.d("AUTHORIZATION", "popExit") }
+
                     else -> null
                 }
             },
@@ -414,14 +491,14 @@ fun AppNavigationGraph(
             AuthScreen(
                 navController = navController,
                 onNavigate = { route ->
-                    navController.navigate(route){
-                        popUpTo(route){
+                    navController.navigate(route) {
+                        popUpTo(route) {
                             inclusive = false
                         }
                     }
                 },
-
-                )
+                onPopBackStack = { navController.popBackStack() }
+            )
         }
         composable(
             route = Application.REGISTRATION,
