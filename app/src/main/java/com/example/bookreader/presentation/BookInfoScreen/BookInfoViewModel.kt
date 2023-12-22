@@ -1,6 +1,7 @@
 package com.example.bookreader.presentation.BookInfoScreen
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.lifecycle.SavedStateHandle
@@ -17,6 +18,8 @@ import com.example.bookreader.domain.repository.BookRepository
 import com.example.bookreader.domain.repository.UserInfoRepository
 import com.example.bookreader.domain.repository.UserRepository
 import com.example.bookreader.presentation.AddReviewScreen.AddReviewEvent
+import com.example.bookreader.presentation.BookInfoScreen.dialog.DialogController
+import com.example.bookreader.presentation.BookInfoScreen.dialog.DialogEvent
 import com.example.bookreader.presentation.utils.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -28,8 +31,9 @@ import javax.inject.Inject
 class BookInfoViewModel @Inject constructor(
     private val repository: BookRepository,
     private val repositoryUser: UserInfoRepository,
+    private val repositoryUserServer: UserRepository,
     savedStateHandle: SavedStateHandle
-) : ViewModel() {
+) : ViewModel(), DialogController {
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -41,6 +45,22 @@ class BookInfoViewModel @Inject constructor(
 
     var user: UserInfo? = null
 
+    var reviewList = mutableStateOf<List<Review>>(listOf())
+
+    var userName = mutableStateOf("")
+
+    override var dialogTitle = mutableStateOf("Уважаемый пользователь! Чтобы оставить отзыв на книгу, нужно авторизоваться в нашем приложении.")
+        private set
+    override var openDialog = mutableStateOf(false)
+        private set
+    override var warningText = mutableStateOf("")
+        private set
+    override var showWarningText = mutableStateOf(true)
+        private set
+
+
+
+
     init {
         bookId = savedStateHandle.get<String>("bookId")?.toInt()!!
         loadBook()
@@ -50,6 +70,31 @@ class BookInfoViewModel @Inject constructor(
         when(event) {
             BookInfoEvent.OnLoad -> {
                 loadUser()
+            }
+
+            BookInfoEvent.OnLoadBook -> {
+                loadBook()
+            }
+
+            is BookInfoEvent.OnClickAddReview -> {
+                if (user == null) {
+                    openDialog.value = true
+                } else {
+                    sendUiEvent(UiEvent.Navigate(event.route))
+                }
+            }
+
+        }
+    }
+
+    override fun onDialogEvent(event: DialogEvent) {
+        when(event) {
+            is DialogEvent.OnAuth -> {
+                sendUiEvent(UiEvent.Navigate(event.route))
+                openDialog.value = false
+            }
+            DialogEvent.OnCancel -> {
+                openDialog.value = false
             }
         }
     }
@@ -101,6 +146,7 @@ class BookInfoViewModel @Inject constructor(
                     loadError.value = ""
                     isLoading.value = false
                     book = currentBook
+                    reviewList.value = currentBook.reviews!!
                 }
 
                 is Resource.Error -> {
@@ -110,7 +156,8 @@ class BookInfoViewModel @Inject constructor(
 
                 else -> {}
             }
-            Log.d("Book", "$book")
+            Log.d("Моя книга с обновлением", "$book")
+            Log.d("Список отзывов с обновлением", "${reviewList.value}")
         }
     }
 
@@ -119,4 +166,6 @@ class BookInfoViewModel @Inject constructor(
             _uiEvent.send(event)
         }
     }
+
+
 }

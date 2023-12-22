@@ -162,7 +162,7 @@ fun BookCardTop(
             color = Color.White,
             fontSize = 20.sp,
             maxLines = 2,
-            modifier = Modifier.layoutId("nameAuthor").padding(end = 220.dp)
+            modifier = Modifier.layoutId("nameAuthor").padding(end = 225.dp)
         )
         Box(
             modifier = Modifier.layoutId("ratingBook")

@@ -4,4 +4,6 @@ import com.example.bookreader.presentation.SearchBookScreen.SearchBookEvent
 
 sealed class BookInfoEvent {
     object OnLoad: BookInfoEvent()
+    object OnLoadBook: BookInfoEvent()
+    data class OnClickAddReview(val route: String): BookInfoEvent()
 }
