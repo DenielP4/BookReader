@@ -5,5 +5,6 @@ data class Review(
     val reviewText: String,
     val rating: Int,
     val reviewDate: String,
-    val userId: Int
+    val userId: Int,
+    val userName: String
 )

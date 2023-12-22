@@ -21,12 +21,14 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
 import androidx.navigation.NavController
 import com.example.bookreader.R
+import com.example.bookreader.presentation.AddReviewScreen.AddReviewViewModel
 import com.example.bookreader.presentation.ui.theme.BlueLight
 import com.gowtham.ratingbar.RatingBar
 import com.gowtham.ratingbar.RatingBarStyle
 
 @Composable
 fun TopSectionReview(
+    viewModel: AddReviewViewModel,
     navController: NavController,
     modifier: Modifier = Modifier,
     onValueChange: (Float) -> Unit

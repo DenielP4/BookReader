@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
+import com.example.bookreader.presentation.AddReviewScreen.AddReviewEvent
+import com.example.bookreader.presentation.AddReviewScreen.AddReviewViewModel
 import com.example.bookreader.presentation.ui.theme.BlackLight
 import com.example.bookreader.presentation.ui.theme.GrayDark
 import com.example.bookreader.presentation.ui.theme.InputDark
@@ -34,6 +36,7 @@ import com.example.bookreader.presentation.ui.theme.TextGray
 
 @Composable
 fun CenterSectionReview(
+    viewModel: AddReviewViewModel,
     modifier: Modifier = Modifier
 ) {
     val constrains = ConstraintSet {
@@ -79,11 +82,13 @@ fun CenterSectionReview(
         ) {
             ConstraintLayout(
                 constraintSet = constrainsInSelection,
-                modifier = Modifier.fillMaxWidth().padding(
-                    top = 10.dp,
-                    start = 10.dp,
-                    end = 10.dp
-                )
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = 10.dp,
+                        start = 10.dp,
+                        end = 10.dp
+                    )
             ) {
                 Text(
                     text = "Комментарий",
@@ -96,8 +101,10 @@ fun CenterSectionReview(
                         .layoutId("input")
                         .padding(horizontal = 10.dp)
                         .fillMaxWidth(),
-                    value = review,
-                    onValueChange = { review = it },
+                    value = viewModel.reviewTextChange.value,
+                    onValueChange = { text ->
+                        viewModel.onEvent(AddReviewEvent.OnReviewTextChange(text))
+                    },
                     textStyle = LocalTextStyle.current.copy(
                         textAlign = TextAlign.Left,
                         color = Color.White

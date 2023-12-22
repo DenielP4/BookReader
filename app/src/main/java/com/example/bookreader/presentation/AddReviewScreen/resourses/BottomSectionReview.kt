@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
+import com.example.bookreader.presentation.AddReviewScreen.AddReviewEvent
+import com.example.bookreader.presentation.AddReviewScreen.AddReviewViewModel
 import com.example.bookreader.presentation.ui.theme.BlackLight
 import com.example.bookreader.presentation.ui.theme.BlueDark
 import com.example.bookreader.presentation.ui.theme.Gray
@@ -35,6 +37,7 @@ import com.example.bookreader.presentation.ui.theme.TextGray
 
 @Composable
 fun BottomSectionReview(
+    viewModel: AddReviewViewModel,
     ratingCurrent: Float,
     modifier: Modifier = Modifier
 ) {
@@ -98,7 +101,9 @@ fun BottomSectionReview(
             modifier = Modifier
                 .layoutId("button")
                 .width(350.dp),
-            onClick = { /*TODO*/ },
+            onClick = {
+                viewModel.onEvent(AddReviewEvent.OnClickAddReview)
+            },
             colors = ButtonDefaults.buttonColors(colorButton),
             shape = RoundedCornerShape(20.dp),
             contentPadding = PaddingValues(

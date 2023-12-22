@@ -22,18 +22,33 @@ import com.example.bookreader.presentation.AddReviewScreen.resourses.BottomSecti
 import com.example.bookreader.presentation.AddReviewScreen.resourses.CenterSectionReview
 import com.example.bookreader.presentation.AddReviewScreen.resourses.TopSectionReview
 import com.example.bookreader.presentation.UserBookScreen.UserBookEvent
+import com.example.bookreader.presentation.utils.UiEvent
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AddReviewScreen(
     navController: NavController,
-    viewModel: AddReviewViewModel = hiltViewModel()
+    viewModel: AddReviewViewModel = hiltViewModel(),
+    onPopBackStack: () -> Unit
 ) {
 
-    var rating by remember {
-        mutableFloatStateOf(0f)
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collect { uiEvent ->
+            when (uiEvent) {
+                is UiEvent.PopBackStack -> {
+                    onPopBackStack()
+                }
+
+                else -> {}
+            }
+        }
     }
+
+//    var rating by remember {
+//        mutableFloatStateOf(0f)
+//    }
+
 
     LaunchedEffect(true) {
         viewModel.onEvent(AddReviewEvent.OnLoad)
@@ -46,20 +61,22 @@ fun AddReviewScreen(
     ) {
         Column {
             TopSectionReview(
+                viewModel = viewModel,
                 navController,
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(0.2f)
-            ) {
-                rating = it
-                Log.d("Rating", "$rating")
+            ) { rating ->
+                viewModel.onEvent(AddReviewEvent.OnReviewChangeRating(rating))
             }
             CenterSectionReview(
+                viewModel = viewModel,
                 modifier = Modifier
                     .weight(1f)
             )
             BottomSectionReview(
-                ratingCurrent = rating,
+                viewModel = viewModel,
+                ratingCurrent = viewModel.ratingChange.floatValue,
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(0.25f)
