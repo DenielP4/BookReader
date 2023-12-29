@@ -39,4 +39,4 @@ Android-приложение для чтения книг с возможнос�
 
 ## Видео работы приложения
 
-Ссылка: https://drive.google.com/file/d/1_w_88pe9pv_X-mEZbsEmjz6SmCXJyLwn/view?usp=sharing 
+https://github.com/DenielP4/BookReader/assets/70586166/c5a3d7d3-acf3-4de0-9d7f-3ea31992a693
